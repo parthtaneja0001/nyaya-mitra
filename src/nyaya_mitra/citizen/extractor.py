@@ -1,4 +1,9 @@
-"""deterministic fact extractor. NEVER an llm — citizen sim must not be tricked into volunteering ids."""
+"""deterministic fact extractor. NEVER an llm — citizen sim must not be tricked into volunteering ids.
+
+emits two streams from each utterance:
+- positive matches → revealed facts (added to elicited)
+- negated matches  → negated facts (consumed by track b's contradiction gate)
+"""
 
 from __future__ import annotations
 
@@ -32,6 +37,12 @@ _PATTERNS: list[tuple[re.Pattern[str], str]] = [
 ]
 
 
+def _is_negated(utterance: str, match: re.Match[str]) -> bool:
+    window_start = max(match.start() - 20, 0)
+    window = utterance[window_start : match.end()]
+    return bool(_NEGATION.search(window))
+
+
 class FactExtractor:
     def extract(
         self,
@@ -43,11 +54,27 @@ class FactExtractor:
         for pattern, fact_id in _PATTERNS:
             if fact_id in prior_elicited:
                 continue
-            if not pattern.search(utterance):
+            match = pattern.search(utterance)
+            if not match:
                 continue
-            window_start = max(pattern.search(utterance).start() - 20, 0)
-            window = utterance[window_start : pattern.search(utterance).end()]
-            if _NEGATION.search(window):
+            if _is_negated(utterance, match):
+                continue
+            out.append(fact_id)
+        return out
+
+    def extract_negations(
+        self,
+        profile: CitizenProfile,
+        utterance: str,
+    ) -> list[str]:
+        """fact ids the utterance explicitly negates. consumed by track b's contradiction gate
+        via info["negated_facts"]."""
+        out: list[str] = []
+        for pattern, fact_id in _PATTERNS:
+            match = pattern.search(utterance)
+            if not match:
+                continue
+            if not _is_negated(utterance, match):
                 continue
             out.append(fact_id)
         return out
