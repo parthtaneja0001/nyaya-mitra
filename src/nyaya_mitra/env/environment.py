@@ -28,6 +28,11 @@ RewardFn = Callable[
     dict[str, float],
 ]
 
+ShapingFn = Callable[
+    [int, AdvisorAction, list[str], bool, str],
+    dict[str, float],
+]
+
 _SENSITIVE_FACT_PREFIXES = (
     "caste_",
     "dv_",
@@ -54,12 +59,14 @@ class NyayaMitraEnv:
         sim: CitizenSimulator,
         extractor: FactExtractor,
         reward_fn: RewardFn | None = None,
+        shaping_fn: ShapingFn | None = None,
         max_turns: int = 20,
     ) -> None:
         self.kb = kb
         self.sim = sim
         self.extractor = extractor
         self.reward_fn = reward_fn
+        self.shaping_fn = shaping_fn
         self.max_turns = max_turns
         self._state: EpisodeState | None = None
 
@@ -68,9 +75,16 @@ class NyayaMitraEnv:
         self._state = EpisodeState(profile=profile, max_turns=self.max_turns)
         utterance = self.sim.initial_utterance(profile)
         revealed = self.extractor.extract(profile, utterance, self._state.elicited_facts)
+        negated = self.extractor.extract_negations(profile, utterance)
         self._state.elicited_facts.update(revealed)
+        self._state.negated_facts.update(negated)
         self._state.transcript.append(
-            TurnRecord(actor="citizen", payload={"utterance": utterance}, revealed=revealed)
+            TurnRecord(
+                actor="citizen",
+                payload={"utterance": utterance},
+                revealed=revealed,
+                negated=negated,
+            )
         )
         return self._observation(revealed)
 
@@ -97,16 +111,31 @@ class NyayaMitraEnv:
         revealed = self.extractor.extract(
             self._state.profile, utterance, self._state.elicited_facts
         )
+        negated = self.extractor.extract_negations(self._state.profile, utterance)
         sim_leak = self._detect_sim_leak(action, revealed)
         if sim_leak:
             self._state.sim_leak_count += 1
 
         self._state.elicited_facts.update(revealed)
+        self._state.negated_facts.update(negated)
+
+        if self.shaping_fn is not None:
+            delta = self.shaping_fn(
+                self._state.turn,
+                action,
+                revealed,
+                sim_leak,
+                self._state.profile.behavior.literacy,
+            )
+            for k, v in delta.items():
+                self._state.shaping_running[k] = self._state.shaping_running.get(k, 0.0) + v
+
         self._state.transcript.append(
             TurnRecord(
                 actor="citizen",
                 payload={"utterance": utterance, "sim_leak": sim_leak},
                 revealed=revealed,
+                negated=negated,
             )
         )
 
@@ -116,6 +145,7 @@ class NyayaMitraEnv:
             done=False,
             info={
                 "elicited_facts": sorted(self._state.elicited_facts),
+                "negated_facts": sorted(negated),
                 "turn": self._state.turn,
                 "max_turns": self.max_turns,
                 "phase": "ongoing",
@@ -134,9 +164,16 @@ class NyayaMitraEnv:
             "max_turns": self._state.max_turns,
             "done": self._state.done,
             "elicited_facts": sorted(self._state.elicited_facts),
+            "negated_facts": sorted(self._state.negated_facts),
+            "shaping_running": dict(self._state.shaping_running),
             "sim_leak_count": self._state.sim_leak_count,
             "transcript": [
-                {"actor": t.actor, "payload": t.payload, "revealed": t.revealed}
+                {
+                    "actor": t.actor,
+                    "payload": t.payload,
+                    "revealed": t.revealed,
+                    "negated": t.negated,
+                }
                 for t in self._state.transcript
             ],
         }
@@ -175,10 +212,13 @@ class NyayaMitraEnv:
             done=True,
             info={
                 "elicited_facts": sorted(s.elicited_facts),
+                "negated_facts": sorted(s.negated_facts),
                 "turn": s.turn,
                 "max_turns": self.max_turns,
                 "phase": "terminal",
                 "truncated_by_env": truncated,
+                "format_violation": False,
+                "shaping_running": dict(s.shaping_running),
                 "reward_breakdown": breakdown,
                 "sim_leak_count": s.sim_leak_count,
             },
