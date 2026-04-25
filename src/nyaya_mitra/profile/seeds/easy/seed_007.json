@@ -1,0 +1,39 @@
+{
+  "seed": 7,
+  "demographics": {
+    "gender": "male",
+    "age": 40,
+    "state": "tamil_nadu",
+    "district": "salem",
+    "residence": "rural"
+  },
+  "economic": {
+    "occupation": "casual labourer",
+    "holds_cultivable_land": false,
+    "monthly_income": 5500,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": true,
+    "kuccha_house": true
+  },
+  "family": {
+    "marital_status": "married",
+    "children": 4
+  },
+  "situation_specific": {
+    "presenting_issue": "I do casual labour in the village. We live in a kuccha hut, the roof leaks. I want to know what schemes I can apply for.",
+    "hidden_facts": {},
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "open",
+    "verbosity": "high",
+    "language_preference": "en",
+    "literacy": "low",
+    "initial_vague_query": "i am a casual labourer, BPL, our house is kuccha. what can i get?"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "seed": 10,
+  "demographics": {
+    "gender": "female",
+    "age": 40,
+    "state": "karnataka",
+    "district": "kolar",
+    "residence": "rural"
+  },
+  "economic": {
+    "occupation": "farmer",
+    "holds_cultivable_land": true,
+    "monthly_income": 5000,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false
+  },
+  "family": {
+    "marital_status": "single_mother",
+    "children": 2
+  },
+  "situation_specific": {
+    "presenting_issue": "I am a single mother farming a small plot. I need help understanding what is available for women like me.",
+    "hidden_facts": {
+      "land_acres": 1.0
+    },
+    "sensitive_facts": {
+      "caste": "scheduled_caste"
+    }
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "hinglish",
+    "literacy": "medium",
+    "initial_vague_query": "Single mother hoon, kheti karti hoon chhote plot par. Kya schemes available hain?"
+  }
+}

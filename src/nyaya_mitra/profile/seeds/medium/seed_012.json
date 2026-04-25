@@ -1,0 +1,41 @@
+{
+  "seed": 12,
+  "demographics": {
+    "gender": "male",
+    "age": 38,
+    "state": "kerala",
+    "district": "kochi",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "construction worker",
+    "holds_cultivable_land": false,
+    "monthly_income": 9000,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "is_wage_worker": true
+  },
+  "family": {
+    "marital_status": "married",
+    "children": 2
+  },
+  "situation_specific": {
+    "presenting_issue": "I work on construction sites. The contractor pays me less than the notified daily wage and threatens dismissal if I complain.",
+    "hidden_facts": {
+      "wages_below_minimum": true
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "low",
+    "language_preference": "en",
+    "literacy": "medium",
+    "initial_vague_query": "I am a construction worker. The contractor underpays. I need help."
+  }
+}

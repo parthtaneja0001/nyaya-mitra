@@ -1,0 +1,42 @@
+{
+  "seed": 11,
+  "demographics": {
+    "gender": "female",
+    "age": 30,
+    "state": "delhi",
+    "district": "south_delhi",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "data entry operator",
+    "holds_cultivable_land": false,
+    "monthly_income": 18000,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": false,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "formally_employed": true
+  },
+  "family": {
+    "marital_status": "married",
+    "children": 0
+  },
+  "situation_specific": {
+    "presenting_issue": "I am pregnant and my employer is pressuring me to resign instead of granting maternity leave.",
+    "hidden_facts": {
+      "pregnant": true,
+      "denied_maternity_benefit": true
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "high",
+    "initial_vague_query": "I am pregnant and my company is asking me to resign instead of maternity leave. Is that legal?"
+  }
+}
