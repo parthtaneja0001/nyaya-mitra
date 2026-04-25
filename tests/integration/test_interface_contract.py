@@ -160,14 +160,87 @@ def test_action_plan_round_trips_through_json():
     assert revived == plan
 
 
-@pytest.mark.skip(reason="awaiting track A: env loop end-to-end")
 def test_full_episode_with_stub_advisor():
-    pass
+    """end-to-end: env reset → step(Ask) → step(Finalize) with track B's reward fn wired in.
+    asserts every key in interface.ALL_KEYS is present in the terminal info breakdown."""
+    from nyaya_mitra.citizen.extractor import FactExtractor
+    from nyaya_mitra.citizen.simulator import CitizenSimulator
+    from nyaya_mitra.env.environment import NyayaMitraEnv
+    from nyaya_mitra.interface import (
+        ALL_KEYS,
+        ActionPlan,
+        ApplicationPath,
+        Ask,
+        Finalize,
+        FreeLegalAidContact,
+        LegalRouteRecommendation,
+        PlainSummary,
+        SchemeRecommendation,
+    )
+    from nyaya_mitra.knowledge.loader import KnowledgeBase
+    from nyaya_mitra.rewards import make_env_reward_fn
+    from nyaya_mitra.rewards.kb_adapter import DuckTypedKB
+
+    kb = KnowledgeBase()
+    reward_fn = make_env_reward_fn(DuckTypedKB(kb))
+    env = NyayaMitraEnv(kb, CitizenSimulator(), FactExtractor(), reward_fn=reward_fn)
+    obs = env.reset(seed=0)
+    assert obs.turn == 0
+
+    res = env.step(Ask(question="tell me more about your situation", language="en"))
+    assert not res.done
+
+    plan = ActionPlan(
+        schemes=[
+            SchemeRecommendation(
+                scheme_id="pm_kisan",
+                rationale_facts=["occupation_farmer"],
+                required_documents=["Aadhaar"],
+                application_path=ApplicationPath(),
+            )
+        ],
+        legal_routes=[
+            LegalRouteRecommendation(
+                framework_id="domestic_violence_act_2005",
+                applicable_situation="dv at home",
+                forum="magistrate",
+                procedural_steps=["file dv-1"],
+                free_legal_aid_contact=FreeLegalAidContact(
+                    authority="DLSA", contact_id="dlsa_ludhiana"
+                ),
+                required_documents=["id"],
+            )
+        ],
+        most_important_next_step="contact dlsa",
+        plain_summary=PlainSummary(language="en", text="we will help"),
+    )
+    res = env.step(Finalize(plan=plan))
+    assert res.done
+    assert res.observation is None
+    assert "reward_breakdown" in res.info
+    breakdown = res.info["reward_breakdown"]
+    for k in ALL_KEYS:
+        assert k in breakdown, f"missing reward key {k}"
+    assert isinstance(breakdown["total"], float)
 
 
-@pytest.mark.skip(reason="awaiting track A: state() debug-gate")
-def test_state_locked_without_debug_env():
-    pass
+def test_state_locked_without_debug_env(monkeypatch):
+    """env.state() must raise without NYAYA_DEBUG=1 and return a dict with it."""
+    from nyaya_mitra.citizen.extractor import FactExtractor
+    from nyaya_mitra.citizen.simulator import CitizenSimulator
+    from nyaya_mitra.env.environment import NyayaMitraEnv
+    from nyaya_mitra.knowledge.loader import KnowledgeBase
+
+    monkeypatch.delenv("NYAYA_DEBUG", raising=False)
+    env = NyayaMitraEnv(KnowledgeBase(), CitizenSimulator(), FactExtractor())
+    env.reset(seed=0)
+    with pytest.raises(RuntimeError, match="NYAYA_DEBUG"):
+        env.state()
+
+    monkeypatch.setenv("NYAYA_DEBUG", "1")
+    snap = env.state()
+    assert "profile" in snap
+    assert "elicited_facts" in snap
 
 
 def test_aggregator_emits_all_keys():
@@ -259,6 +332,10 @@ def test_aggregator_emits_all_keys():
     assert isinstance(out["total"], float)
 
 
-@pytest.mark.skip(reason="awaiting track A: kb json files exist")
 def test_kb_json_matches_schema():
-    pass
+    """every kb json file under knowledge/data/ must validate against the schemas in
+    interface/kb_schemas.py."""
+    from nyaya_mitra.knowledge.validators import validate_kb
+
+    errors = validate_kb()
+    assert not errors, f"kb schema violations: {errors}"

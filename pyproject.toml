@@ -5,6 +5,7 @@ description = "paralegal-cum-welfare-advisor RL environment for vulnerable India
 requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.6",
+    "jsonschema>=4.21",
 ]
 
 [project.optional-dependencies]
@@ -12,7 +13,6 @@ track_a = [
     "fastapi>=0.110",
     "uvicorn[standard]>=0.27",
     "httpx>=0.27",
-    "jsonschema>=4.21",
 ]
 track_b = [
     "trl>=0.9",
