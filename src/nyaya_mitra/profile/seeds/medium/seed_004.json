@@ -1,0 +1,40 @@
+{
+  "seed": 4,
+  "demographics": {
+    "gender": "female",
+    "age": 42,
+    "state": "uttar_pradesh",
+    "district": "varanasi",
+    "residence": "rural"
+  },
+  "economic": {
+    "occupation": "farmer",
+    "holds_cultivable_land": true,
+    "monthly_income": 6500,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false
+  },
+  "family": {
+    "marital_status": "married",
+    "children": 3
+  },
+  "situation_specific": {
+    "presenting_issue": "I work on a small farm, BPL family, my husband works in the city as a daily wage laborer.",
+    "hidden_facts": {
+      "land_acres": 0.8
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "hinglish",
+    "literacy": "low",
+    "initial_vague_query": "Mai farmer hoon, BPL hain hum, kya help mil sakti hai schemes mein?"
+  }
+}

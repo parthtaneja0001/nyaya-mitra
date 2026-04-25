@@ -111,7 +111,7 @@ def test_state_returns_snapshot_with_debug(env: NyayaMitraEnv, monkeypatch: pyte
 
 def test_derived_ground_truth_runs_kb_checkers(env: NyayaMitraEnv, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("NYAYA_DEBUG", "1")
-    env.reset(seed=1)
+    env.reset(seed=0)
     truth = env.state()["profile"]["derived_ground_truth"]
     assert set(truth["eligible_schemes"]) == {"pm_kisan", "pmuy", "mgnrega"}
     assert set(truth["applicable_frameworks"]) == {"domestic_violence_act_2005"}

@@ -1,0 +1,39 @@
+{
+  "seed": 3,
+  "demographics": {
+    "gender": "male",
+    "age": 35,
+    "state": "maharashtra",
+    "district": "mumbai",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "software developer",
+    "holds_cultivable_land": false,
+    "monthly_income": 65000,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": true,
+    "income_tax_payer": true,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "is_consumer_disputant": true
+  },
+  "family": {
+    "marital_status": "single"
+  },
+  "situation_specific": {
+    "presenting_issue": "I bought a phone online for 25,000 rupees. It doesn't work and the seller refuses to refund.",
+    "hidden_facts": {
+      "defective_goods": true
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "high",
+    "initial_vague_query": "I have an issue with an online purchase that turned out defective and I can't get a refund."
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "seed": 2,
+  "demographics": {
+    "gender": "female",
+    "age": 58,
+    "state": "bihar",
+    "district": "patna",
+    "residence": "rural"
+  },
+  "economic": {
+    "occupation": "homemaker",
+    "holds_cultivable_land": false,
+    "monthly_income": 0,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false
+  },
+  "family": {
+    "marital_status": "widowed",
+    "children": 3
+  },
+  "situation_specific": {
+    "presenting_issue": "I am a widow, I cook with wood and have no gas connection.",
+    "hidden_facts": {},
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "open",
+    "verbosity": "high",
+    "language_preference": "hi",
+    "literacy": "low",
+    "initial_vague_query": "मैं विधवा हूं, चूल्हे पर खाना बनाती हूं, गैस नहीं है।"
+  }
+}

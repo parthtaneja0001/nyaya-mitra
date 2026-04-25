@@ -1,0 +1,47 @@
+{
+  "seed": 6,
+  "demographics": {
+    "gender": "female",
+    "age": 27,
+    "state": "bihar",
+    "district": "muzaffarpur",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "garment factory worker",
+    "holds_cultivable_land": false,
+    "monthly_income": 8500,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "formally_employed": true,
+    "is_wage_worker": true
+  },
+  "family": {
+    "marital_status": "married",
+    "children": 1
+  },
+  "situation_specific": {
+    "presenting_issue": "I am pregnant and my employer is denying me maternity leave; things at home are also not safe.",
+    "hidden_facts": {
+      "pregnant": true,
+      "denied_maternity_benefit": true,
+      "wages_below_minimum": false
+    },
+    "sensitive_facts": {
+      "dv_history": true,
+      "dv_present": true
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "low",
+    "language_preference": "hi",
+    "literacy": "low",
+    "initial_vague_query": "मुझे काम पर परेशानी है, और घर में भी कुछ ठीक नहीं है।"
+  }
+}

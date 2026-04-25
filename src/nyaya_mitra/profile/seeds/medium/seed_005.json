@@ -1,0 +1,43 @@
+{
+  "seed": 5,
+  "demographics": {
+    "gender": "female",
+    "age": 29,
+    "state": "maharashtra",
+    "district": "pune",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "textile factory worker",
+    "holds_cultivable_land": false,
+    "monthly_income": 14000,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": false,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "formally_employed": true,
+    "is_wage_worker": true
+  },
+  "family": {
+    "marital_status": "married"
+  },
+  "situation_specific": {
+    "presenting_issue": "I am pregnant and my employer is pushing me to quit instead of giving maternity leave.",
+    "hidden_facts": {
+      "pregnant": true,
+      "denied_maternity_benefit": true,
+      "wages_below_minimum": false
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "medium",
+    "initial_vague_query": "My employer is asking me to resign because I am pregnant. What can I do?"
+  }
+}
