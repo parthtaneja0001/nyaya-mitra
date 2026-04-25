@@ -9,7 +9,62 @@
     "punjab": {
       "contact_id": "slsa_punjab",
       "name": "Punjab State Legal Services Authority",
-      "phone": "0172-2741336"
+      "phone": "0172-2741336",
+      "url": "https://slsapunjab.gov.in/"
+    },
+    "bihar": {
+      "contact_id": "slsa_bihar",
+      "name": "Bihar State Legal Services Authority",
+      "phone": "0612-2230154",
+      "url": "https://bslsa.bihar.gov.in/"
+    },
+    "uttar_pradesh": {
+      "contact_id": "slsa_uttar_pradesh",
+      "name": "Uttar Pradesh State Legal Services Authority",
+      "phone": "0522-2786688",
+      "url": "https://upslsa.gov.in/"
+    },
+    "maharashtra": {
+      "contact_id": "slsa_maharashtra",
+      "name": "Maharashtra State Legal Services Authority",
+      "phone": "022-22691395",
+      "url": "https://mslsa.maharashtra.gov.in/"
+    },
+    "tamil_nadu": {
+      "contact_id": "slsa_tamil_nadu",
+      "name": "Tamil Nadu State Legal Services Authority",
+      "phone": "044-25342441",
+      "url": "https://tnlegalservices.tn.gov.in/"
+    },
+    "rajasthan": {
+      "contact_id": "slsa_rajasthan",
+      "name": "Rajasthan State Legal Services Authority",
+      "phone": "0141-2227481",
+      "url": "https://rslsa.rajasthan.gov.in/"
+    },
+    "karnataka": {
+      "contact_id": "slsa_karnataka",
+      "name": "Karnataka State Legal Services Authority",
+      "phone": "080-22111714",
+      "url": "https://kslsa.kar.nic.in/"
+    },
+    "delhi": {
+      "contact_id": "slsa_delhi",
+      "name": "Delhi State Legal Services Authority",
+      "phone": "011-23386176",
+      "url": "https://dslsa.org/"
+    },
+    "kerala": {
+      "contact_id": "slsa_kerala",
+      "name": "Kerala State Legal Services Authority",
+      "phone": "0471-2305473",
+      "url": "https://kelsa.nic.in/"
+    },
+    "west_bengal": {
+      "contact_id": "slsa_west_bengal",
+      "name": "West Bengal State Legal Services Authority",
+      "phone": "033-22487018",
+      "url": "https://wblegalservices.gov.in/"
     }
   },
   "DLSAs": {
@@ -17,6 +72,101 @@
       "contact_id": "dlsa_ludhiana",
       "name": "DLSA Ludhiana",
       "phone": "0161-2444411"
+    },
+    "punjab.amritsar": {
+      "contact_id": "dlsa_amritsar",
+      "name": "DLSA Amritsar",
+      "phone": "0183-2226868"
+    },
+    "bihar.patna": {
+      "contact_id": "dlsa_patna",
+      "name": "DLSA Patna",
+      "phone": "0612-2238888"
+    },
+    "bihar.muzaffarpur": {
+      "contact_id": "dlsa_muzaffarpur",
+      "name": "DLSA Muzaffarpur",
+      "phone": "0621-2245456"
+    },
+    "uttar_pradesh.varanasi": {
+      "contact_id": "dlsa_varanasi",
+      "name": "DLSA Varanasi",
+      "phone": "0542-2502401"
+    },
+    "uttar_pradesh.lucknow": {
+      "contact_id": "dlsa_lucknow",
+      "name": "DLSA Lucknow",
+      "phone": "0522-2627999"
+    },
+    "maharashtra.mumbai": {
+      "contact_id": "dlsa_mumbai",
+      "name": "DLSA Mumbai",
+      "phone": "022-22691395"
+    },
+    "maharashtra.pune": {
+      "contact_id": "dlsa_pune",
+      "name": "DLSA Pune",
+      "phone": "020-26122525"
+    },
+    "tamil_nadu.salem": {
+      "contact_id": "dlsa_salem",
+      "name": "DLSA Salem",
+      "phone": "0427-2415588"
+    },
+    "tamil_nadu.tiruvannamalai": {
+      "contact_id": "dlsa_tiruvannamalai",
+      "name": "DLSA Tiruvannamalai",
+      "phone": "04175-235001"
+    },
+    "tamil_nadu.chennai": {
+      "contact_id": "dlsa_chennai",
+      "name": "DLSA Chennai",
+      "phone": "044-25340444"
+    },
+    "rajasthan.jodhpur": {
+      "contact_id": "dlsa_jodhpur",
+      "name": "DLSA Jodhpur",
+      "phone": "0291-2771113"
+    },
+    "rajasthan.jaipur": {
+      "contact_id": "dlsa_jaipur",
+      "name": "DLSA Jaipur",
+      "phone": "0141-2227481"
+    },
+    "karnataka.bengaluru_urban": {
+      "contact_id": "dlsa_bengaluru_urban",
+      "name": "DLSA Bengaluru Urban",
+      "phone": "080-22111714"
+    },
+    "karnataka.kolar": {
+      "contact_id": "dlsa_kolar",
+      "name": "DLSA Kolar",
+      "phone": "08152-225399"
+    },
+    "delhi.south_delhi": {
+      "contact_id": "dlsa_south_delhi",
+      "name": "DLSA South Delhi (Saket Court Complex)",
+      "phone": "011-29561023"
+    },
+    "delhi.new_delhi": {
+      "contact_id": "dlsa_new_delhi",
+      "name": "DLSA New Delhi (Patiala House)",
+      "phone": "011-23386176"
+    },
+    "kerala.kochi": {
+      "contact_id": "dlsa_kochi",
+      "name": "DLSA Ernakulam (Kochi)",
+      "phone": "0484-2620320"
+    },
+    "kerala.thiruvananthapuram": {
+      "contact_id": "dlsa_thiruvananthapuram",
+      "name": "DLSA Thiruvananthapuram",
+      "phone": "0471-2305473"
+    },
+    "west_bengal.kolkata": {
+      "contact_id": "dlsa_kolkata",
+      "name": "DLSA Kolkata",
+      "phone": "033-22487018"
     }
   },
   "qualifying_categories": [
@@ -24,8 +174,11 @@
     "Children",
     "Persons with disability",
     "Members of SC/ST",
+    "Victims of trafficking or beggar (as defined under article 23 of the Constitution)",
     "Persons in custody",
     "Industrial workmen",
-    "Persons with annual income below the state legal aid threshold"
+    "Persons with annual income below the state legal aid threshold (typically Rs 1-3 lakh per annum, varies by state)",
+    "Victims of mass disaster, ethnic violence, caste atrocity, flood, drought, earthquake, industrial disaster",
+    "Senior citizens (60+) of limited means"
   ]
 }
