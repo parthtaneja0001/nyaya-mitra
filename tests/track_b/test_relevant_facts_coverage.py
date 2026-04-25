@@ -60,3 +60,38 @@ def test_fact_ids_are_well_formed():
             if not f or not all(c.islower() or c.isdigit() or c == "_" for c in f):
                 bad.append(f"{kb_id}: {f!r}")
     assert not bad, f"malformed fact ids: {bad}"
+
+
+def test_kb_adapter_agrees_with_track_a_relevant_facts():
+    """canonical source is profile/relevant_facts._RELEVANT_BY_ID. mine must match.
+
+    drift between the two maps means fact_coverage and the env-side relevant_facts()
+    disagree on what counts as relevant — agent learns one signal, env reports
+    another. fail loudly here so the next divergence gets caught immediately.
+
+    long-term fix is to move the mapping into KB JSON (interface task on board).
+    """
+    try:
+        track_a = importlib.import_module("nyaya_mitra.profile.relevant_facts")
+    except Exception as exc:  # pragma: no cover
+        pytest.skip(f"track-a profile module not importable: {exc}")
+    canonical = getattr(track_a, "_RELEVANT_BY_ID", None)
+    if canonical is None:  # pragma: no cover
+        pytest.skip("track-a _RELEVANT_BY_ID not exposed")
+
+    diffs: list[str] = []
+    for kb_id, facts in canonical.items():
+        mine = _DEFAULT_RELEVANT_FACTS.get(kb_id)
+        if mine is None:
+            diffs.append(f"{kb_id}: track-a has {sorted(facts)}, kb_adapter missing")
+            continue
+        if mine != facts:
+            only_a = sorted(facts - mine)
+            only_b = sorted(mine - facts)
+            diffs.append(f"{kb_id}: track-a only={only_a} kb_adapter only={only_b}")
+    extra_in_b = sorted(set(_DEFAULT_RELEVANT_FACTS) - set(canonical))
+    if extra_in_b:
+        diffs.append(f"kb_adapter has entries track-a does not: {extra_in_b}")
+    assert not diffs, (
+        "fact-id drift between kb_adapter and profile/relevant_facts:\n  " + "\n  ".join(diffs)
+    )

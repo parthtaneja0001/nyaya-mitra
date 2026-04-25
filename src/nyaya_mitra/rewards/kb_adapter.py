@@ -29,11 +29,11 @@ class _RawKBLike(Protocol):
 # checker for that scheme/framework actually reads from the profile. used by
 # fact_coverage to decide which facts the agent must elicit.
 #
-# fact ids must match what track A's extractor emits. when a checker reads a
-# field that the extractor does not yet emit, the fact id is still listed here
-# (so coverage tracks the contract correctly) — track A grows the extractor to
-# match. coverage components tolerate missing facts gracefully (return 1.0 when
-# the relevant set is empty), so this stays safe ahead of extractor growth.
+# CANONICAL SOURCE: nyaya_mitra.profile.relevant_facts._RELEVANT_BY_ID (track A).
+# this map mirrors track A's verbatim. drift between the two is a regression
+# (test_relevant_facts_coverage.py asserts they agree). long-term plan: move
+# the mapping into KB JSON so neither side owns a separate dict — tracked as
+# the [interface] follow-up task on the board.
 _DEFAULT_RELEVANT_FACTS: dict[str, set[str]] = {
     # schemes
     "pm_kisan": {"occupation_farmer", "land_small"},
