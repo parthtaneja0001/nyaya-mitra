@@ -24,6 +24,7 @@ track_b = [
     "matplotlib>=3.7",
     "numpy>=1.26",
     "sentence-transformers>=2.5",
+    "pyyaml>=6.0",
 ]
 train = [
     "unsloth",
@@ -33,6 +34,9 @@ dev = [
     "pytest-asyncio>=0.23",
     "ruff>=0.4",
     "pre-commit>=3.6",
+    "pyyaml>=6.0",
+    "matplotlib>=3.7",
+    "numpy>=1.26",
 ]
 
 [build-system]
@@ -44,7 +48,7 @@ packages = ["src/nyaya_mitra"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.ruff]

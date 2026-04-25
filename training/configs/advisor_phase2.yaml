@@ -1,0 +1,52 @@
+# phase 2: co-trained adversarial. advisor + generator alternate updates.
+phase: phase2
+model:
+  base_model: Qwen/Qwen2.5-3B-Instruct
+  load_in_4bit: true
+  use_unsloth: true
+  resume_adapter: training/checkpoints/phase1_final.lora  # from warmup
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+grpo:
+  num_generations: 4
+  learning_rate: 5.0e-6  # lower than phase1; advisor is fine-tuning, not bootstrapping
+  beta: 0.04
+  max_prompt_length: 4096
+  max_completion_length: 512
+  temperature: 0.9
+  top_p: 0.95
+  num_episodes: 2000
+  episode_batch_size: 4
+
+alternation:
+  advisor_episodes: 100
+  generator_episodes: 50
+  cycles: 14            # 14 * (100 + 50) = 2100 episodes >= 2000
+
+generator:
+  base_model: Qwen/Qwen2.5-3B-Instruct
+  use_unsloth: true
+  diversity_penalty_weight: 0.5
+  invalid_penalty: 1.0
+  recent_window: 50
+
+env:
+  max_turns: 12
+  difficulty_mix:
+    easy: 0.3
+    medium: 0.5
+    hard: 0.2
+
+logging:
+  wandb_project: nyaya-mitra-grpo
+  wandb_tags: [phase2, adversarial]
+  log_every: 1
+  transcript_dump_every: 100
+  transcript_dump_count: 5
+  adapter_snapshot_every: 200
+  metrics_jsonl: training/dumps/phase2_metrics.jsonl

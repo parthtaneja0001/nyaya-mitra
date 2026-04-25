@@ -1,0 +1,44 @@
+# phase 1 warmup: advisor only, hand-authored curriculum, no generator.
+# target: rolling-100 mean reward >= 0.3 by step 500.
+phase: warmup
+model:
+  base_model: Qwen/Qwen2.5-3B-Instruct  # 3B chosen so the colab notebook fits T4. swap to 7B on a100 by overriding from cli.
+  load_in_4bit: true
+  use_unsloth: true
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+grpo:
+  num_generations: 4
+  learning_rate: 1.0e-5
+  beta: 0.04            # KL penalty coefficient
+  max_prompt_length: 4096
+  max_completion_length: 512
+  temperature: 0.9
+  top_p: 0.95
+  num_episodes: 500
+  episode_batch_size: 4
+
+env:
+  max_turns: 12  # cut from 20 for warmup so episodes finalize faster
+  difficulty_mix:
+    easy: 0.7
+    medium: 0.25
+    hard: 0.05
+
+logging:
+  wandb_project: nyaya-mitra-grpo
+  wandb_tags: [phase1, warmup]
+  log_every: 1
+  transcript_dump_every: 100
+  transcript_dump_count: 5
+  adapter_snapshot_every: 200
+  metrics_jsonl: training/dumps/phase1_metrics.jsonl
+
+abort:
+  # if rolling-100 mean reward < 0.1 after 500 episodes, stop and inspect.
+  min_rolling_mean_at_500: 0.10

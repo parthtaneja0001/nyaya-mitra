@@ -6,6 +6,7 @@ __pycache__/
 .python-version.local
 training/dumps/
 training/checkpoints/
+src/nyaya_mitra/profile/seeds/_eval/
 *.log
 .pytest_cache/
 .ruff_cache/
