@@ -163,12 +163,14 @@ def _translate_transcript(transcript: list[_TurnLike]) -> list[Turn]:
         actor = getattr(rec, "actor", None)
         payload = getattr(rec, "payload", {}) or {}
         revealed = list(getattr(rec, "revealed", []) or [])
+        negated = list(getattr(rec, "negated", []) or [])
         if actor == "advisor":
             action = _action_from_payload(payload)
             out.append(Turn(index=i, action=action, citizen_observation=None, info=dict(payload)))
         elif actor == "citizen":
             obs_info = dict(payload)
             obs_info["revealed"] = revealed
+            obs_info["negated_facts"] = negated
             out.append(
                 Turn(
                     index=i,

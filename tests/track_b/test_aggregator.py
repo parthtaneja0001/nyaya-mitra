@@ -258,6 +258,70 @@ def test_make_env_reward_fn_signature(kb_basic: FakeKB):
         assert k in out
 
 
+def test_translator_surfaces_turnrecord_negated_through_contradiction_gate(kb_basic: FakeKB):
+    """track A's env writes per-turn TurnRecord.negated. the translator must copy
+    that into Turn.info['negated_facts'] so the contradiction gate fires when a
+    plan's rationale_facts include something the citizen explicitly negated."""
+    from dataclasses import dataclass, field
+    from typing import Any
+
+    from nyaya_mitra.interface.reward_keys import GATE_CONTRADICTION
+
+    @dataclass
+    class FakeTurnRecord:
+        actor: str
+        payload: dict[str, Any]
+        revealed: list[str] = field(default_factory=list)
+        negated: list[str] = field(default_factory=list)
+
+    transcript = [
+        FakeTurnRecord(
+            actor="citizen",
+            payload={"utterance": "i am not a farmer"},
+            revealed=[],
+            negated=["occupation_farmer"],
+        )
+    ]
+    profile = make_profile(eligible_schemes=["pm_kisan"])
+    plan = make_plan(
+        schemes=[make_scheme_rec("pm_kisan", rationale_facts=["occupation_farmer"])],
+    )
+    fn = make_env_reward_fn(kb_basic)
+    out = fn(profile, plan, transcript, {"occupation_farmer"})
+    assert out[GATE_CONTRADICTION] == 1.0
+    assert out[TOTAL] == GATE_FAIL_TOTAL
+
+
+def test_translator_handles_missing_negated_attr_gracefully(kb_basic: FakeKB):
+    """legacy TurnRecord shapes without a 'negated' attribute must still translate."""
+    from dataclasses import dataclass, field
+    from typing import Any
+
+    @dataclass
+    class LegacyTurnRecord:
+        actor: str
+        payload: dict[str, Any]
+        revealed: list[str] = field(default_factory=list)
+
+    transcript = [
+        LegacyTurnRecord(
+            actor="citizen",
+            payload={"utterance": "ok"},
+            revealed=["occupation_farmer"],
+        )
+    ]
+    profile = make_profile(eligible_schemes=["pm_kisan"])
+    plan = make_plan(
+        schemes=[make_scheme_rec("pm_kisan", rationale_facts=["occupation_farmer"])],
+    )
+    fn = make_env_reward_fn(kb_basic)
+    out = fn(profile, plan, transcript, {"occupation_farmer"})
+    # no negation surfaced -> contradiction gate stays off
+    from nyaya_mitra.interface.reward_keys import GATE_CONTRADICTION
+
+    assert out[GATE_CONTRADICTION] == 0.0
+
+
 def test_no_dignity_dominance_with_max_judge(kb_basic: FakeKB):
     """if a malicious LLM-judge stamps every plan as 1.0, the agent still cannot
     score higher than 0.05 from dignity alone — proves no single LLM component
