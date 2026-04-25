@@ -29,22 +29,22 @@ class _RawKBLike(Protocol):
 # checker for that scheme/framework actually reads from the profile. used by
 # fact_coverage to decide which facts the agent must elicit.
 #
-# fact ids must match what track A's extractor emits. when a checker reads a
-# field that the extractor does not yet emit, the fact id is still listed here
-# (so coverage tracks the contract correctly) — track A grows the extractor to
-# match. coverage components tolerate missing facts gracefully (return 1.0 when
-# the relevant set is empty), so this stays safe ahead of extractor growth.
+# CANONICAL SOURCE: nyaya_mitra.profile.relevant_facts._RELEVANT_BY_ID (track A).
+# this map mirrors track A's verbatim. drift between the two is a regression
+# (test_relevant_facts_coverage.py asserts they agree). long-term plan: move
+# the mapping into KB JSON so neither side owns a separate dict — tracked as
+# the [interface] follow-up task on the board.
 _DEFAULT_RELEVANT_FACTS: dict[str, set[str]] = {
     # schemes
     "pm_kisan": {"occupation_farmer", "land_small"},
     "pmuy": {"gender_female", "bpl_household", "no_lpg"},
-    "ayushman_bharat": {"secc_listed", "urban_occupational_category"},
-    "mgnrega": {"adult", "residence_rural", "willing_unskilled_work"},
+    "ayushman_bharat": {"secc_listed_or_urban_occ"},
+    "mgnrega": {"residence_rural", "age_adult", "willing_unskilled_work"},
     "pm_awas_grameen": {"residence_rural", "secc_listed", "kuccha_or_houseless"},
-    "pmsby": {"adult_18_70", "has_bank_account"},
+    "pmsby": {"age_18_to_70", "has_bank_account"},
     # frameworks
     "domestic_violence_act_2005": {"gender_female", "dv_present"},
-    "consumer_protection_act_2019": {"is_consumer", "consumer_grievance"},
+    "consumer_protection_act_2019": {"is_consumer_disputant", "defect_or_deficiency"},
     "maternity_benefit_act_1961": {
         "gender_female",
         "formally_employed",

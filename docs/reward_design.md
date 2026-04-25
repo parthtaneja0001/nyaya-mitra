@@ -87,35 +87,31 @@ All of these are optional with safe defaults. The reward function tolerates Trac
 
 ## Relevant-facts contract (extractor → reward)
 
-`fact_coverage` and the integration bonus rely on knowing which fact IDs each scheme/framework's checker reads from the profile. The map lives in `src/nyaya_mitra/rewards/kb_adapter.py:_DEFAULT_RELEVANT_FACTS`.
+`fact_coverage` and the integration bonus rely on knowing which fact IDs each scheme/framework's checker reads from the profile. **Canonical source: `src/nyaya_mitra/profile/relevant_facts.py:_RELEVANT_BY_ID` (Track A).** The Track-B-side mirror lives at `src/nyaya_mitra/rewards/kb_adapter.py:_DEFAULT_RELEVANT_FACTS` and must agree exactly.
 
-A regression test (`tests/track_b/test_relevant_facts_coverage.py`) asserts that every KB entry has a non-empty fact set, so KB growth without map growth fails CI.
+Two regression tests guard this:
+
+- `test_every_scheme_has_relevant_facts_entry` / `test_every_framework_has_relevant_facts_entry` — KB growth without map growth fails CI.
+- `test_kb_adapter_agrees_with_track_a_relevant_facts` — drift between the two maps fails CI.
+
+The long-term plan is to move the mapping into KB JSON so neither side owns a separate dict; tracked as a separate `[interface]` task on the board.
 
 Current contract — fact IDs Track A's extractor must emit when the citizen reveals these realities:
 
-| Source | Fact ID | Meaning |
-|---|---|---|
-| `pm_kisan` | `occupation_farmer` | citizen identifies as farmer / kisan |
-| `pm_kisan` | `land_small` | small / marginal landholding |
-| `pmuy` | `gender_female`, `bpl_household`, `no_lpg` | woman in BPL household without LPG |
-| `ayushman_bharat` | `secc_listed` | household appears in SECC 2011 deprivation list |
-| `ayushman_bharat` | `urban_occupational_category` | urban worker in PMJAY occupational category |
-| `mgnrega` | `adult` | age ≥ 18 |
-| `mgnrega` | `residence_rural` | lives in rural area |
-| `mgnrega` | `willing_unskilled_work` | willing to do unskilled manual work |
-| `pm_awas_grameen` | `kuccha_or_houseless` | lives in kuccha house or is houseless |
-| `pmsby` | `adult_18_70` | age 18–70 |
-| `pmsby` | `has_bank_account` | savings bank or post office account |
-| `domestic_violence_act_2005` | `dv_present` | reports ongoing domestic violence |
-| `consumer_protection_act_2019` | `is_consumer` | paid transaction with provider |
-| `consumer_protection_act_2019` | `consumer_grievance` | defective goods / deficient service / unfair practice |
-| `maternity_benefit_act_1961` | `formally_employed` | formally employed |
-| `maternity_benefit_act_1961` | `pregnant_or_postpartum` | pregnant or recent delivery |
-| `maternity_benefit_act_1961` | `denied_maternity_benefit` | benefit denied by employer |
-| `minimum_wages_act_1948` | `is_wage_worker` | wage worker in scheduled employment |
-| `minimum_wages_act_1948` | `wages_below_minimum` | reports wages below notified minimum |
+| Source | Fact IDs |
+|---|---|
+| `pm_kisan` | `occupation_farmer`, `land_small` |
+| `pmuy` | `gender_female`, `bpl_household`, `no_lpg` |
+| `ayushman_bharat` | `secc_listed_or_urban_occ` |
+| `mgnrega` | `residence_rural`, `age_adult`, `willing_unskilled_work` |
+| `pm_awas_grameen` | `residence_rural`, `secc_listed`, `kuccha_or_houseless` |
+| `pmsby` | `age_18_to_70`, `has_bank_account` |
+| `domestic_violence_act_2005` | `gender_female`, `dv_present` |
+| `consumer_protection_act_2019` | `is_consumer_disputant`, `defect_or_deficiency` |
+| `maternity_benefit_act_1961` | `gender_female`, `formally_employed`, `pregnant_or_postpartum`, `denied_maternity_benefit` |
+| `minimum_wages_act_1948` | `is_wage_worker`, `wages_below_minimum` |
 
-These IDs are stable; track A grows the extractor patterns to emit them. New IDs require coordinated update of both the extractor and this map.
+New IDs require coordinated update of (1) the eligibility/applicability checker, (2) `profile/relevant_facts.py`, (3) `rewards/kb_adapter.py`, and (4) the extractor.
 
 ## Testing
 
