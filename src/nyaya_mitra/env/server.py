@@ -36,6 +36,27 @@ class ResetRequest(BaseModel):
     difficulty: str | None = None
 
 
+@app.get("/")
+def root() -> dict[str, Any]:
+    """basic landing for hf spaces / smoke checks. lists endpoints."""
+    return {
+        "name": "nyaya-mitra",
+        "description": "paralegal-cum-welfare-advisor RL environment",
+        "endpoints": {
+            "POST /reset": "start a new episode; body {seed, difficulty}",
+            "POST /step": "submit an AdvisorAction; body matches interface.AdvisorAction",
+            "GET /state": "debug snapshot; requires NYAYA_DEBUG=1",
+            "POST /close": "release the current episode",
+            "GET /healthz": "liveness probe",
+        },
+    }
+
+
+@app.get("/healthz")
+def healthz() -> dict[str, str]:
+    return {"status": "ok"}
+
+
 @app.post("/reset")
 def reset(req: ResetRequest) -> dict[str, Any]:
     assert _env is not None
