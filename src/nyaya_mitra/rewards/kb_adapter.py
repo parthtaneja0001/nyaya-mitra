@@ -25,13 +25,33 @@ class _RawKBLike(Protocol):
     dlsa: dict[str, Any]
 
 
-# fact-id mapping for the toy kb. track A will grow this; track B can override
-# at construction time. lives here because it's reward-side knowledge about
-# which fact ids each scheme/framework cares about.
+# fact-id mapping. each entry lists the fact ids the eligibility/applicability
+# checker for that scheme/framework actually reads from the profile. used by
+# fact_coverage to decide which facts the agent must elicit.
+#
+# fact ids must match what track A's extractor emits. when a checker reads a
+# field that the extractor does not yet emit, the fact id is still listed here
+# (so coverage tracks the contract correctly) — track A grows the extractor to
+# match. coverage components tolerate missing facts gracefully (return 1.0 when
+# the relevant set is empty), so this stays safe ahead of extractor growth.
 _DEFAULT_RELEVANT_FACTS: dict[str, set[str]] = {
+    # schemes
     "pm_kisan": {"occupation_farmer", "land_small"},
     "pmuy": {"gender_female", "bpl_household", "no_lpg"},
+    "ayushman_bharat": {"secc_listed", "urban_occupational_category"},
+    "mgnrega": {"adult", "residence_rural", "willing_unskilled_work"},
+    "pm_awas_grameen": {"residence_rural", "secc_listed", "kuccha_or_houseless"},
+    "pmsby": {"adult_18_70", "has_bank_account"},
+    # frameworks
     "domestic_violence_act_2005": {"gender_female", "dv_present"},
+    "consumer_protection_act_2019": {"is_consumer", "consumer_grievance"},
+    "maternity_benefit_act_1961": {
+        "gender_female",
+        "formally_employed",
+        "pregnant_or_postpartum",
+        "denied_maternity_benefit",
+    },
+    "minimum_wages_act_1948": {"is_wage_worker", "wages_below_minimum"},
 }
 
 
