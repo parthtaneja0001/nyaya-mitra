@@ -170,9 +170,93 @@ def test_state_locked_without_debug_env():
     pass
 
 
-@pytest.mark.skip(reason="awaiting track B: aggregator emits all reward keys")
 def test_aggregator_emits_all_keys():
-    pass
+    """track B aggregator must emit every key in interface.ALL_KEYS, including TOTAL.
+
+    uses an in-test fake kb so this stays self-contained. depends on
+    nyaya_mitra.rewards.compute_reward and the public RewardContext shape.
+    """
+    from nyaya_mitra.interface import (
+        ALL_KEYS,
+        ActionPlan,
+        ApplicationPath,
+        Behavior,
+        CitizenProfile,
+        DerivedGroundTruth,
+        PlainSummary,
+        SchemeRecommendation,
+        SituationSpecific,
+    )
+    from nyaya_mitra.rewards import compute_reward
+    from nyaya_mitra.rewards.context import RewardContext
+
+    class _FakeKB:
+        def has_scheme(self, sid):
+            return sid == "pm_kisan"
+
+        def has_framework(self, fid):
+            return False
+
+        def has_contact(self, authority, cid):
+            return False
+
+        def documents_for_scheme(self, sid):
+            return ["Aadhaar"]
+
+        def documents_for_framework(self, fid):
+            return []
+
+        def procedural_steps_for_framework(self, fid):
+            return []
+
+        def forum_for_framework(self, fid):
+            return None
+
+        def legal_aid_authority_for_framework(self, fid):
+            return None
+
+        def relevant_facts_for_scheme(self, sid):
+            return set()
+
+        def relevant_facts_for_framework(self, fid):
+            return set()
+
+    profile = CitizenProfile(
+        seed=1,
+        situation_specific=SituationSpecific(presenting_issue="x"),
+        behavior=Behavior(
+            trust_level="neutral",
+            verbosity="med",
+            language_preference="en",
+            literacy="medium",
+            initial_vague_query="x",
+        ),
+        derived_ground_truth=DerivedGroundTruth(eligible_schemes=["pm_kisan"]),
+    )
+    plan = ActionPlan(
+        schemes=[
+            SchemeRecommendation(
+                scheme_id="pm_kisan",
+                rationale_facts=[],
+                required_documents=["Aadhaar"],
+                application_path=ApplicationPath(),
+            )
+        ],
+        most_important_next_step="apply at csc",
+        plain_summary=PlainSummary(language="en", text="will help apply for pm-kisan."),
+    )
+    ctx = RewardContext(
+        profile=profile,
+        plan=plan,
+        transcript=[],
+        elicited_facts=set(),
+        kb=_FakeKB(),
+        info={"max_turns": 20},
+    )
+    out = compute_reward(ctx)
+    for k in ALL_KEYS:
+        assert k in out, f"missing reward key {k}"
+    assert isinstance(out["total"], float)
 
 
 @pytest.mark.skip(reason="awaiting track A: kb json files exist")
