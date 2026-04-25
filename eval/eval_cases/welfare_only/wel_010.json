@@ -1,0 +1,43 @@
+{
+  "seed": 110,
+  "demographics": {
+    "gender": "female",
+    "age": 40,
+    "state": "telangana",
+    "district": "hyderabad",
+    "residence": "rural"
+  },
+  "economic": {
+    "occupation": "farmer",
+    "holds_cultivable_land": true,
+    "monthly_income": 0,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": true,
+    "kuccha_house": true,
+    "formally_employed": false,
+    "is_wage_worker": false,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "rural Dalit farmer, multiple welfare needs",
+    "hidden_facts": {
+      "land_acres": 1.2
+    },
+    "sensitive_facts": {
+      "caste": "scheduled_caste"
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "med",
+    "language_preference": "hi",
+    "literacy": "low",
+    "initial_vague_query": "मैं खेती करती हूं, बहुत समस्या है।"
+  }
+}

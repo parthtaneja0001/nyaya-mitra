@@ -1,0 +1,45 @@
+{
+  "seed": 305,
+  "demographics": {
+    "gender": "female",
+    "age": 30,
+    "state": "karnataka",
+    "district": "bengaluru_urban",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "domestic worker",
+    "holds_cultivable_land": false,
+    "monthly_income": 0,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": true,
+    "is_wage_worker": true,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "migrant from Bihar, pregnant, denied leave, bpl back home",
+    "hidden_facts": {
+      "pregnant": true,
+      "denied_maternity_benefit": true
+    },
+    "sensitive_facts": {
+      "dv_present": true,
+      "immigration": "interstate_migrant"
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "med",
+    "language_preference": "hinglish",
+    "literacy": "low",
+    "initial_vague_query": "UP se aayi hoon, factory mein kaam, pregnant hoon, ghar bhi safe nahi."
+  }
+}

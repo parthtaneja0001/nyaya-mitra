@@ -1,0 +1,42 @@
+{
+  "seed": 202,
+  "demographics": {
+    "gender": "female",
+    "age": 27,
+    "state": "maharashtra",
+    "district": "mumbai",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "bank teller",
+    "holds_cultivable_land": false,
+    "monthly_income": 32000,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": false,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": true,
+    "is_wage_worker": false,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "pregnant, employer demanding resignation instead of leave",
+    "hidden_facts": {
+      "pregnant": true,
+      "denied_maternity_benefit": true
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "high",
+    "initial_vague_query": "I am pregnant; my employer wants me to resign."
+  }
+}

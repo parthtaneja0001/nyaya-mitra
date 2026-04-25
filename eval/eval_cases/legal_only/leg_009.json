@@ -1,0 +1,41 @@
+{
+  "seed": 209,
+  "demographics": {
+    "gender": "male",
+    "age": 33,
+    "state": "gujarat",
+    "district": "ahmedabad",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "hotel housekeeping",
+    "holds_cultivable_land": false,
+    "monthly_income": 0,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": false,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": false,
+    "is_wage_worker": true,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "paid below minimum wage by hotel chain",
+    "hidden_facts": {
+      "wages_below_minimum": true
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "medium",
+    "initial_vague_query": "The hotel is paying me less than the wage notified for my work."
+  }
+}

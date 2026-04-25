@@ -1,0 +1,41 @@
+{
+  "seed": 205,
+  "demographics": {
+    "gender": "male",
+    "age": 29,
+    "state": "tamil_nadu",
+    "district": "chennai",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "construction labourer",
+    "holds_cultivable_land": false,
+    "monthly_income": 0,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": false,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": false,
+    "is_wage_worker": true,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "contractor pays below state-notified minimum wage",
+    "hidden_facts": {
+      "wages_below_minimum": true
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "medium",
+    "initial_vague_query": "The contractor is paying me less than minimum wage daily."
+  }
+}

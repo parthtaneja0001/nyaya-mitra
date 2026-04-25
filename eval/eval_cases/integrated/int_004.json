@@ -1,0 +1,44 @@
+{
+  "seed": 304,
+  "demographics": {
+    "gender": "female",
+    "age": 42,
+    "state": "rajasthan",
+    "district": "jodhpur",
+    "residence": "rural"
+  },
+  "economic": {
+    "occupation": "farmer",
+    "holds_cultivable_land": true,
+    "monthly_income": 0,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": true,
+    "kuccha_house": true,
+    "formally_employed": false,
+    "is_wage_worker": false,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "rural farmer Dalit woman, husband violent, kuccha house",
+    "hidden_facts": {
+      "land_acres": 1.2
+    },
+    "sensitive_facts": {
+      "dv_present": true,
+      "caste": "scheduled_caste"
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "low",
+    "language_preference": "hi",
+    "literacy": "low",
+    "initial_vague_query": "मैं किसान हूं, घर कच्चा है, पति मारता है।"
+  }
+}

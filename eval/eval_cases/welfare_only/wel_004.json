@@ -1,0 +1,39 @@
+{
+  "seed": 104,
+  "demographics": {
+    "gender": "male",
+    "age": 30,
+    "state": "madhya_pradesh",
+    "district": "bhopal",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "office assistant",
+    "holds_cultivable_land": false,
+    "monthly_income": 22000,
+    "bpl_household": false,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": true,
+    "is_wage_worker": false,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "employed in city, want insurance schemes",
+    "hidden_facts": {},
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "high",
+    "initial_vague_query": "I work an office job, want to know about government insurance."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "seed": 307,
+  "demographics": {
+    "gender": "female",
+    "age": 27,
+    "state": "tamil_nadu",
+    "district": "chennai",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "garment factory worker",
+    "holds_cultivable_land": false,
+    "monthly_income": 0,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": true,
+    "is_wage_worker": true,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "pregnant Dalit factory worker, denied leave, paid below minimum",
+    "hidden_facts": {
+      "pregnant": true,
+      "denied_maternity_benefit": true,
+      "wages_below_minimum": true
+    },
+    "sensitive_facts": {
+      "caste": "scheduled_caste"
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "medium",
+    "initial_vague_query": "I am a factory worker, pregnant, denied leave, underpaid daily."
+  }
+}

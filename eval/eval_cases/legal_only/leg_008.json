@@ -1,0 +1,42 @@
+{
+  "seed": 208,
+  "demographics": {
+    "gender": "female",
+    "age": 45,
+    "state": "west_bengal",
+    "district": "kolkata",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "college lecturer",
+    "holds_cultivable_land": false,
+    "monthly_income": 60000,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": true,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": false,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": false,
+    "is_wage_worker": false,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "DV at home, looking for protection orders",
+    "hidden_facts": {},
+    "sensitive_facts": {
+      "dv_present": true,
+      "dv_history": true
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "high",
+    "initial_vague_query": "My husband has been violent for years. I want to get a protection order."
+  }
+}

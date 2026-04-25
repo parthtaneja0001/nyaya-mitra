@@ -1,0 +1,41 @@
+{
+  "seed": 201,
+  "demographics": {
+    "gender": "male",
+    "age": 72,
+    "state": "delhi",
+    "district": "new_delhi",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "retiree",
+    "holds_cultivable_land": false,
+    "monthly_income": 0,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": false,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": false,
+    "is_wage_worker": false,
+    "is_consumer_disputant": true
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "paid for fake online course, no refund",
+    "hidden_facts": {
+      "defective_goods": true
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "high",
+    "initial_vague_query": "I purchased an online course that turned out to be fraudulent."
+  }
+}

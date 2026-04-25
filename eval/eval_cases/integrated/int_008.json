@@ -1,0 +1,42 @@
+{
+  "seed": 308,
+  "demographics": {
+    "gender": "female",
+    "age": 45,
+    "state": "west_bengal",
+    "district": "kolkata",
+    "residence": "rural"
+  },
+  "economic": {
+    "occupation": "farmer",
+    "holds_cultivable_land": true,
+    "monthly_income": 0,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": true,
+    "kuccha_house": true,
+    "formally_employed": false,
+    "is_wage_worker": false,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "elderly rural Dalit farmer woman, husband violent, kuccha hut",
+    "hidden_facts": {},
+    "sensitive_facts": {
+      "dv_present": true,
+      "caste": "scheduled_caste"
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "med",
+    "language_preference": "hi",
+    "literacy": "low",
+    "initial_vague_query": "ਮੈਂ ਖੇਤੀ ਕਰਦੀ ਹਾਂ, ਘਰ ਕੱਚਾ ਹੈ, ਪਤੀ ਮਾਰਦੇ ਹਨ।"
+  }
+}

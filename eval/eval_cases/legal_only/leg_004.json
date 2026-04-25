@@ -1,0 +1,41 @@
+{
+  "seed": 204,
+  "demographics": {
+    "gender": "male",
+    "age": 40,
+    "state": "karnataka",
+    "district": "bengaluru_urban",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "finance manager",
+    "holds_cultivable_land": false,
+    "monthly_income": 85000,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": true,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": false,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": false,
+    "is_wage_worker": false,
+    "is_consumer_disputant": true
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "electronics retailer sold defective laptop",
+    "hidden_facts": {
+      "defective_goods": true
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "high",
+    "initial_vague_query": "The laptop I purchased is defective. The seller refuses replacement."
+  }
+}

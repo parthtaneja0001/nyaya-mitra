@@ -1,0 +1,46 @@
+{
+  "seed": 310,
+  "demographics": {
+    "gender": "female",
+    "age": 24,
+    "state": "delhi",
+    "district": "south_delhi",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "housemaid",
+    "holds_cultivable_land": false,
+    "monthly_income": 0,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": true,
+    "is_wage_worker": true,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "young migrant DV survivor, pregnant, BPL, denied leave",
+    "hidden_facts": {
+      "pregnant": true,
+      "denied_maternity_benefit": true
+    },
+    "sensitive_facts": {
+      "dv_present": true,
+      "dv_history": true,
+      "immigration": "interstate_migrant"
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "low",
+    "language_preference": "en",
+    "literacy": "low",
+    "initial_vague_query": "I am 24, just married, pregnant. He hits me. The factory won't give leave."
+  }
+}

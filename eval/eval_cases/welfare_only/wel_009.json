@@ -1,0 +1,39 @@
+{
+  "seed": 109,
+  "demographics": {
+    "gender": "male",
+    "age": 35,
+    "state": "gujarat",
+    "district": "ahmedabad",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "shop accountant",
+    "holds_cultivable_land": false,
+    "monthly_income": 28000,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": true,
+    "is_wage_worker": false,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "urban formal employee, basic insurance interest",
+    "hidden_facts": {},
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "high",
+    "initial_vague_query": "I work in a shop with formal pay. What insurance schemes are there?"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "seed": 206,
+  "demographics": {
+    "gender": "female",
+    "age": 31,
+    "state": "telangana",
+    "district": "hyderabad",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "quality engineer",
+    "holds_cultivable_land": false,
+    "monthly_income": 55000,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": false,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": true,
+    "is_wage_worker": false,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "pregnant, IT firm refusing maternity benefit",
+    "hidden_facts": {
+      "pregnant": true,
+      "denied_maternity_benefit": true
+    },
+    "sensitive_facts": {}
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "high",
+    "initial_vague_query": "My company is refusing to grant me maternity leave."
+  }
+}

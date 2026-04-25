@@ -1,0 +1,42 @@
+{
+  "seed": 203,
+  "demographics": {
+    "gender": "female",
+    "age": 72,
+    "state": "tamil_nadu",
+    "district": "chennai",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "homemaker",
+    "holds_cultivable_land": false,
+    "monthly_income": 0,
+    "bpl_household": false,
+    "existing_lpg_in_family": true,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": false,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": false,
+    "is_wage_worker": false,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "elderly woman, husband has been hitting her",
+    "hidden_facts": {},
+    "sensitive_facts": {
+      "dv_present": true,
+      "dv_history": true
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "medium",
+    "initial_vague_query": "My husband is hitting me, I am scared at home."
+  }
+}

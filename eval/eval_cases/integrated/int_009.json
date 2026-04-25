@@ -1,0 +1,45 @@
+{
+  "seed": 309,
+  "demographics": {
+    "gender": "female",
+    "age": 29,
+    "state": "kerala",
+    "district": "kochi",
+    "residence": "urban"
+  },
+  "economic": {
+    "occupation": "hospitality staff",
+    "holds_cultivable_land": false,
+    "monthly_income": 0,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": false,
+    "kuccha_house": false,
+    "formally_employed": true,
+    "is_wage_worker": true,
+    "is_consumer_disputant": false
+  },
+  "family": {},
+  "situation_specific": {
+    "presenting_issue": "pregnant, denied leave, migrant facing DV at home",
+    "hidden_facts": {
+      "pregnant": true,
+      "denied_maternity_benefit": true
+    },
+    "sensitive_facts": {
+      "dv_present": true,
+      "immigration": "interstate_migrant"
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "med",
+    "language_preference": "en",
+    "literacy": "medium",
+    "initial_vague_query": "I am pregnant, the hotel won't give leave; my husband has been violent."
+  }
+}
