@@ -38,13 +38,13 @@ _DEFAULT_RELEVANT_FACTS: dict[str, set[str]] = {
     # schemes
     "pm_kisan": {"occupation_farmer", "land_small"},
     "pmuy": {"gender_female", "bpl_household", "no_lpg"},
-    "ayushman_bharat": {"secc_listed_or_urban_occ"},
-    "mgnrega": {"residence_rural", "age_adult", "willing_unskilled_work"},
+    "ayushman_bharat": {"secc_listed", "urban_occupational_category"},
+    "mgnrega": {"adult", "residence_rural", "willing_unskilled_work"},
     "pm_awas_grameen": {"residence_rural", "secc_listed", "kuccha_or_houseless"},
-    "pmsby": {"age_18_to_70", "has_bank_account"},
+    "pmsby": {"adult_18_70", "has_bank_account"},
     # frameworks
     "domestic_violence_act_2005": {"gender_female", "dv_present"},
-    "consumer_protection_act_2019": {"is_consumer_disputant", "defect_or_deficiency"},
+    "consumer_protection_act_2019": {"is_consumer", "consumer_grievance"},
     "maternity_benefit_act_1961": {
         "gender_female",
         "formally_employed",
