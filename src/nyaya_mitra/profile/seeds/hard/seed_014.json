@@ -1,0 +1,43 @@
+{
+  "seed": 14,
+  "demographics": {
+    "gender": "female",
+    "age": 35,
+    "state": "tamil_nadu",
+    "district": "tiruvannamalai",
+    "residence": "rural"
+  },
+  "economic": {
+    "occupation": "farmer",
+    "holds_cultivable_land": true,
+    "monthly_income": 4500,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": true,
+    "secc_listed": true,
+    "kuccha_house": true
+  },
+  "family": {
+    "marital_status": "married",
+    "children": 3
+  },
+  "situation_specific": {
+    "presenting_issue": "I am a Dalit woman farming a tiny plot. We live in a kuccha hut. I have many issues — no LPG, kids are sick, I don't know what schemes I can get.",
+    "hidden_facts": {
+      "land_acres": 1.5
+    },
+    "sensitive_facts": {
+      "caste": "scheduled_caste"
+    }
+  },
+  "behavior": {
+    "trust_level": "wary",
+    "verbosity": "low",
+    "language_preference": "hi",
+    "literacy": "low",
+    "initial_vague_query": "मैं किसान हूं, छोटा खेत है। हमारा घर कच्चा है। बहुत परेशानी है।"
+  }
+}

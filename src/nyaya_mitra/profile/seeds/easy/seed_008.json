@@ -1,0 +1,41 @@
+{
+  "seed": 8,
+  "demographics": {
+    "gender": "female",
+    "age": 33,
+    "state": "rajasthan",
+    "district": "jodhpur",
+    "residence": "rural"
+  },
+  "economic": {
+    "occupation": "homemaker",
+    "holds_cultivable_land": false,
+    "monthly_income": 0,
+    "bpl_household": true,
+    "existing_lpg_in_family": false,
+    "is_professional": false,
+    "income_tax_payer": false,
+    "willing_unskilled_work": true,
+    "has_bank_account": false,
+    "secc_listed": false
+  },
+  "family": {
+    "marital_status": "married",
+    "children": 2
+  },
+  "situation_specific": {
+    "presenting_issue": "I am a homemaker, BPL family, no gas connection at home. I have a physical disability from polio.",
+    "hidden_facts": {},
+    "sensitive_facts": {
+      "disability": "polio",
+      "disability_present": true
+    }
+  },
+  "behavior": {
+    "trust_level": "neutral",
+    "verbosity": "med",
+    "language_preference": "hi",
+    "literacy": "low",
+    "initial_vague_query": "मैं गृहिणी हूं, BPL परिवार है, गैस नहीं है घर में।"
+  }
+}

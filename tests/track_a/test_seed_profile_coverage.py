@@ -42,6 +42,38 @@ EXPECTED: dict[str, dict[str, set[str]]] = {
         "schemes": {"pmuy", "pmsby"},
         "frameworks": {"maternity_benefit_act_1961", "domestic_violence_act_2005"},
     },
+    "seed_007": {
+        "schemes": {"ayushman_bharat", "mgnrega", "pm_awas_grameen", "pmsby"},
+        "frameworks": set(),
+    },
+    "seed_008": {
+        "schemes": {"mgnrega", "pmuy"},
+        "frameworks": set(),
+    },
+    "seed_009": {
+        "schemes": {"pmsby"},
+        "frameworks": {"consumer_protection_act_2019"},
+    },
+    "seed_010": {
+        "schemes": {"mgnrega", "pm_kisan", "pmsby", "pmuy"},
+        "frameworks": set(),
+    },
+    "seed_011": {
+        "schemes": {"pmsby"},
+        "frameworks": {"maternity_benefit_act_1961"},
+    },
+    "seed_012": {
+        "schemes": {"pmsby"},
+        "frameworks": {"minimum_wages_act_1948"},
+    },
+    "seed_013": {
+        "schemes": {"pmsby", "pmuy"},
+        "frameworks": {"domestic_violence_act_2005", "maternity_benefit_act_1961"},
+    },
+    "seed_014": {
+        "schemes": {"ayushman_bharat", "mgnrega", "pm_awas_grameen", "pm_kisan", "pmsby", "pmuy"},
+        "frameworks": set(),
+    },
 }
 
 
