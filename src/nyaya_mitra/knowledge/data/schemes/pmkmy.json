@@ -1,0 +1,34 @@
+{
+  "scheme_id": "pmkmy",
+  "name": {
+    "en": "Pradhan Mantri Kisan Maan-Dhan Yojana",
+    "hi": "प्रधानमंत्री किसान मानधन योजना"
+  },
+  "category": "agriculture_rural",
+  "ministry": "Ministry of Agriculture and Farmers Welfare",
+  "benefit": {
+    "en": "Guaranteed monthly pension of rupees 3,000 after age 60 to small and marginal farmers; government matches farmer's monthly contribution.",
+    "hi": "60 वर्ष की आयु के बाद छोटे और सीमांत किसानों को 3,000 रुपये मासिक पेंशन"
+  },
+  "eligibility_rules_human": "Small and marginal farmer (cultivable landholding up to 2 hectares) aged 18 to 40 with a savings bank account, monthly contribution scaled to entry age. Excludes professionals, income-tax payers, and beneficiaries of other contributory pension schemes.",
+  "required_documents": [
+    "Aadhaar",
+    "Bank account passbook",
+    "Land record (khasra-khatauni)",
+    "Recent photograph"
+  ],
+  "application_paths": {
+    "online_url": "https://maandhan.in/",
+    "offline_office_pattern": "Common Service Centre (CSC)",
+    "offline_steps": [
+      "Visit CSC with documents",
+      "Operator enrolls farmer on the maandhan portal",
+      "Choose contribution slab",
+      "Receive enrollment confirmation; auto-debit begins"
+    ]
+  },
+  "source": {
+    "url": "https://maandhan.in/",
+    "verified_on": "2026-04-26"
+  }
+}

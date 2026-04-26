@@ -55,9 +55,12 @@ def test_eval_case_parses_and_derives(cohort: str, path: Path, kb: KnowledgeBase
         assert not frameworks, f"{path.name}: welfare-only must have 0 frameworks, got {frameworks}"
     elif cohort == "legal_only":
         assert len(frameworks) >= 1, f"{path.name}: legal-only needs >=1 framework"
-        scheme_set = schemes - {"pmsby"}
+        # universal-eligibility schemes (insurance / pension that nearly any adult with a
+        # bank account qualifies for) are allowed; the legal signal is what defines the cohort.
+        universal = {"pmsby", "pmjjby", "apy"}
+        scheme_set = schemes - universal
         assert not scheme_set, (
-            f"{path.name}: legal-only allows pmsby only, got extra schemes {scheme_set}"
+            f"{path.name}: legal-only allows {sorted(universal)} only, got extra schemes {scheme_set}"
         )
     elif cohort == "integrated":
         assert len(schemes) >= 1, f"{path.name}: integrated needs >=1 scheme"

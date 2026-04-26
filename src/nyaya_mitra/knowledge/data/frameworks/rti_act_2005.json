@@ -1,0 +1,32 @@
+{
+  "framework_id": "rti_act_2005",
+  "name": {
+    "en": "Right to Information Act, 2005",
+    "hi": "सूचना का अधिकार अधिनियम, 2005"
+  },
+  "category": "civil_rights",
+  "applicable_situations": [
+    "Citizen wants to obtain information held by a public authority",
+    "Public authority is delaying or denying access to information that should be public",
+    "Application to inspect government records, take certified copies, or seek samples"
+  ],
+  "forum": "Public Information Officer (PIO) of the relevant public authority; first appeal to First Appellate Authority; second appeal to State / Central Information Commission",
+  "limitation_period_note": "PIO must respond within 30 days (48 hours if life or liberty involved). First appeal within 30 days of decision or within 30 days from when response was due. Second appeal within 90 days of first appellate order.",
+  "procedural_steps": [
+    "File RTI application addressed to the PIO of the public authority, with rupees 10 fee (BPL applicants exempt)",
+    "PIO responds within 30 days (or 48 hours for life/liberty)",
+    "If not satisfied, file first appeal to First Appellate Authority within 30 days",
+    "If still aggrieved, file second appeal to State / Central Information Commission within 90 days"
+  ],
+  "required_documents": [
+    "Identity proof",
+    "RTI application addressed to PIO",
+    "Fee of rupees 10 (in cash, IPO, or DD); BPL applicants attach BPL certificate for exemption",
+    "Self-addressed envelope (for postal response)"
+  ],
+  "legal_aid_authority": "DLSA",
+  "source": {
+    "url": "https://rti.gov.in/",
+    "verified_on": "2026-04-26"
+  }
+}

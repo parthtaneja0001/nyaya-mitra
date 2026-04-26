@@ -1,0 +1,34 @@
+{
+  "framework_id": "pwd_act_2016",
+  "name": {
+    "en": "Rights of Persons with Disabilities Act, 2016",
+    "hi": "विकलांग व्यक्तियों के अधिकार अधिनियम, 2016"
+  },
+  "category": "civil_rights",
+  "applicable_situations": [
+    "Discrimination against a person with disability in employment, education, or public services",
+    "Denial of reasonable accommodation in workplace, school, or transport",
+    "Refusal to provide accessible infrastructure (ramps, signage, accessible documents) by a public establishment",
+    "Violation of reservations in education or government employment for persons with benchmark disability"
+  ],
+  "forum": "State Commissioner for Persons with Disabilities; District Court for civil matters; Special Court for offences",
+  "limitation_period_note": "No fixed limitation for filing a complaint with the State Commissioner. Civil claims follow the Limitation Act (typically 3 years). Criminal complaints under the Act should be filed promptly.",
+  "procedural_steps": [
+    "File written complaint with the State Commissioner for Persons with Disabilities",
+    "Commissioner has powers of a civil court: summons, evidence, recommendations",
+    "Recommendations to be acted upon by the public authority within prescribed time",
+    "For aggrieved party: civil suit in District Court for damages or specific performance",
+    "Criminal offences (denial of benefits, fraudulent claim of disability): police complaint and prosecution in Special Court"
+  ],
+  "required_documents": [
+    "Identity proof",
+    "Disability certificate from competent medical authority",
+    "Written complaint with details of discrimination or denial",
+    "Documentary evidence (denial letter, photographs of inaccessible premises, witness statements)"
+  ],
+  "legal_aid_authority": "DLSA",
+  "source": {
+    "url": "https://depwd.gov.in/",
+    "verified_on": "2026-04-26"
+  }
+}

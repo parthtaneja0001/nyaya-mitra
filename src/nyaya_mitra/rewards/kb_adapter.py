@@ -42,6 +42,17 @@ _DEFAULT_RELEVANT_FACTS: dict[str, set[str]] = {
     "mgnrega": {"adult", "residence_rural", "willing_unskilled_work"},
     "pm_awas_grameen": {"residence_rural", "secc_listed", "kuccha_or_houseless"},
     "pmsby": {"adult_18_70", "has_bank_account"},
+    "pmjjby": {"adult_18_50", "has_bank_account"},
+    "apy": {"adult_18_40", "has_bank_account", "not_income_tax_payer"},
+    "pmmvy": {
+        "gender_female",
+        "pregnant_or_postpartum",
+        "first_living_child_or_second_girl",
+        "not_govt_employee",
+    },
+    "iggndps": {"bpl_household", "severe_or_multiple_disability"},
+    "pmkmy": {"occupation_farmer", "land_small", "has_bank_account", "not_income_tax_payer"},
+    "pmegp": {"planning_new_microenterprise"},
     # frameworks
     "domestic_violence_act_2005": {"gender_female", "dv_present"},
     "consumer_protection_act_2019": {"is_consumer", "consumer_grievance"},
@@ -52,6 +63,10 @@ _DEFAULT_RELEVANT_FACTS: dict[str, set[str]] = {
         "denied_maternity_benefit",
     },
     "minimum_wages_act_1948": {"is_wage_worker", "wages_below_minimum"},
+    "posh_act_2013": {"gender_female", "formally_employed", "sexual_harassment_at_workplace"},
+    "rti_act_2005": {"seeks_government_information"},
+    "pwd_act_2016": {"disability_present", "disability_discrimination_present"},
+    "sc_st_atrocities_act_1989": {"caste_sc_or_st", "caste_atrocity_present"},
 }
 
 

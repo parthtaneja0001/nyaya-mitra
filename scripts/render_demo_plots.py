@@ -42,7 +42,7 @@ def main() -> None:
         steps = load_training_jsonl(training_jsonl)
         print(f"  loaded {len(steps)} steps")
     else:
-        print(f"  not found — plots will be placeholders for the training-side panels")
+        print("  not found — plots will be placeholders for the training-side panels")
         steps = []
 
     print("running scripted baseline eval over 30 held-out cases...")

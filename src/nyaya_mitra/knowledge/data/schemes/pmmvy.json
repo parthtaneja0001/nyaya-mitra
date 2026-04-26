@@ -1,0 +1,35 @@
+{
+  "scheme_id": "pmmvy",
+  "name": {
+    "en": "Pradhan Mantri Matru Vandana Yojana",
+    "hi": "प्रधानमंत्री मातृ वंदना योजना"
+  },
+  "category": "women_child",
+  "ministry": "Ministry of Women and Child Development",
+  "benefit": {
+    "en": "Cash incentive of rupees 5,000 in three installments to pregnant and lactating mothers for the first living child, plus rupees 6,000 if the second child is a girl.",
+    "hi": "पहले जीवित बच्चे के लिए गर्भवती व स्तनपान कराने वाली माताओं को 5,000 रुपये की नकद राशि"
+  },
+  "eligibility_rules_human": "Pregnant or lactating woman aged 19 or above, for her first live birth (or second if it is a girl). Government employees of central/state/PSU not eligible. Excludes those already getting comparable cash benefits.",
+  "required_documents": [
+    "Aadhaar of mother and husband",
+    "MCP (Mother & Child Protection) card",
+    "Bank or post office account passbook",
+    "Birth certificate (post delivery)"
+  ],
+  "application_paths": {
+    "online_url": "https://wcd.nic.in/schemes/pradhan-mantri-matru-vandana-yojana",
+    "offline_office_pattern": "Anganwadi Centre or designated health facility",
+    "offline_steps": [
+      "Register pregnancy at Anganwadi or health facility",
+      "Submit Form 1A within 150 days of LMP",
+      "Receive 1st installment (rupees 1,000) on registration",
+      "Receive 2nd installment (rupees 2,000) after first ANC checkup at 6 months",
+      "Receive 3rd installment (rupees 2,000) after birth registration and first immunisation"
+    ]
+  },
+  "source": {
+    "url": "https://wcd.nic.in/schemes/pradhan-mantri-matru-vandana-yojana",
+    "verified_on": "2026-04-26"
+  }
+}

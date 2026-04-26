@@ -1,0 +1,33 @@
+{
+  "scheme_id": "apy",
+  "name": {
+    "en": "Atal Pension Yojana",
+    "hi": "अटल पेंशन योजना"
+  },
+  "category": "labor_livelihood",
+  "ministry": "Ministry of Finance",
+  "benefit": {
+    "en": "Guaranteed minimum pension of rupees 1,000 to 5,000 per month after age 60, depending on contribution. Government co-contributes for early enrollees.",
+    "hi": "60 वर्ष की आयु के बाद 1,000 से 5,000 रुपये मासिक न्यूनतम पेंशन"
+  },
+  "eligibility_rules_human": "Indian citizen aged 18 to 40 with a savings bank or post office account, not an income-tax payer, who can contribute monthly until age 60. Auto-debit of contribution from the linked account.",
+  "required_documents": [
+    "Aadhaar",
+    "Bank account details",
+    "APY registration form"
+  ],
+  "application_paths": {
+    "online_url": "https://www.npscra.nsdl.co.in/scheme-details.php",
+    "offline_office_pattern": "Account-holding bank branch",
+    "offline_steps": [
+      "Visit the bank branch",
+      "Submit APY registration form",
+      "Choose pension slab (1000/2000/3000/4000/5000)",
+      "Contribution auto-debited monthly"
+    ]
+  },
+  "source": {
+    "url": "https://www.npscra.nsdl.co.in/scheme-details.php",
+    "verified_on": "2026-04-26"
+  }
+}
