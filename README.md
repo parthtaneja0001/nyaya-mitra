@@ -1,8 +1,25 @@
 # Nyaya Mitra
 
-A paralegal-cum-welfare-advisor RL environment for vulnerable Indian citizens. OpenEnv-compliant. GRPO-trained. Adversarially self-improving.
+A paralegal-cum-welfare-advisor RL environment for vulnerable Indian citizens. OpenEnv-compatible HTTP contract. GRPO-trained on a free Colab T4. Anti-reward-hacking by construction.
 
 > *"What if the agent had to choose between giving you advice and routing you to a real lawyer — and the env made the second one structurally unavoidable?"*
+
+## Submission materials
+
+| | |
+|---|---|
+| 🚀 **Live HF Space** | <https://huggingface.co/spaces/parthtaneja0001/nyaya-mitra-env> ([healthz](https://parthtaneja0001-nyaya-mitra-env.hf.space/healthz)) |
+| 📓 **Training notebook (Colab)** | [`training/train_grpo_colab.ipynb`](training/train_grpo_colab.ipynb) — [open in Colab](https://colab.research.google.com/github/parthtaneja0001/nyaya-mitra/blob/main/training/train_grpo_colab.ipynb) |
+| 📝 **Blog post** | [`demo/blog_post.md`](demo/blog_post.md) |
+| 🎬 **Video script** | [`demo/video_script.md`](demo/video_script.md) (recording follows training) |
+| 📊 **Training plots** | [`demo/plots/`](demo/plots/) — six PNGs regenerated from real metrics post-training |
+| 🧱 **OpenEnv manifest** | [`openenv.yaml`](openenv.yaml) — declares the FastAPI entrypoint, runtime, port |
+| 🛡️ **Reward design + gates** | [`docs/reward_design.md`](docs/reward_design.md) |
+| 📦 **Repo source** | <https://github.com/parthtaneja0001/nyaya-mitra> |
+
+## OpenEnv compatibility
+
+The env exposes the standard OpenEnv HTTP contract — `POST /reset`, `POST /step`, `POST /close`, `GET /state`, `GET /healthz` — with JSON request/response bodies driven by Pydantic schemas in [`src/nyaya_mitra/interface/`](src/nyaya_mitra/interface/). It's a Gym-style `Environment` class wrapped in FastAPI ([`src/nyaya_mitra/env/server.py`](src/nyaya_mitra/env/server.py)), declared via [`openenv.yaml`](openenv.yaml), containerized via [`Dockerfile`](Dockerfile), and deployed as the Space linked above. Discoverable, runnable, framework-agnostic.
 
 ## What this is
 
@@ -130,15 +147,36 @@ export HF_TOKEN=hf_...
 - **23 extractor patterns** + **72 golden tests** across en / hi / hinglish, with negation handling and absence-polarity facts
 - **380+ total tests pass**, 0 skipped, ruff clean
 
-Training plots / reward curves / before-vs-after demos are in `eval/report.md` once Track B's runs land.
+## Training (real run on free Colab T4)
+
+The Colab notebook at [`training/train_grpo_colab.ipynb`](training/train_grpo_colab.ipynb) trains Qwen 2.5 0.5B Instruct (Unsloth + 4-bit + LoRA) for 100 episodes against the easy/medium curriculum. Config: [`training/configs/advisor_t4.yaml`](training/configs/advisor_t4.yaml). Metrics dump to [`training/dumps/phase1_t4_metrics.jsonl`](training/dumps/) — that's the source for the plots below, rendered by [`scripts/render_demo_plots.py`](scripts/render_demo_plots.py).
+
+| Reward curve | Reward components |
+|---|---|
+| ![total reward](demo/plots/total_reward_curve.png) | ![components](demo/plots/reward_components_stacked.png) |
+
+| Gate triggers | Sim-leak count |
+|---|---|
+| ![gates](demo/plots/gate_trigger_frequency.png) | ![sim_leak](demo/plots/sim_leak_over_training.png) |
+
+| Baseline vs trained | Integration solve rate |
+|---|---|
+| ![baseline](demo/plots/baseline_vs_trained_bars.png) | ![integration](demo/plots/integration_solve_rate.png) |
+
+The training loop adds a per-turn format-correctness shaping bonus (+0.05 per parseable advisor action, capped at 0.30/episode). This gives a non-zero gradient during cold-start when an untrained 0.5B model cannot yet emit a valid `FINALIZE` schema. Once the model masters JSON formatting (`n_parse_ok` saturating at 6/6), the env reward signal takes over.
 
 ## Submission artifacts
 
-- HF Space env: deploy via `scripts/deploy_space.sh` (see [docs/deploy.md](docs/deploy.md))
-- Reward design + invariants: [docs/reward_design.md](docs/reward_design.md)
-- Demo cases + transcripts: `demo/transcripts/` (Track B fills in post-training)
-- Plots: `demo/plots/` (PNGs, post-training)
-- Scope + liability framing: [docs/what_this_is_not.md](docs/what_this_is_not.md)
+- 🚀 **Live HF Space**: <https://huggingface.co/spaces/parthtaneja0001/nyaya-mitra-env>
+- 📓 **Training notebook**: [`training/train_grpo_colab.ipynb`](training/train_grpo_colab.ipynb)
+- 📝 **Blog post**: [`demo/blog_post.md`](demo/blog_post.md)
+- 🎬 **Video script**: [`demo/video_script.md`](demo/video_script.md)
+- 📊 **Plots** (real-data, post-training): [`demo/plots/`](demo/plots/)
+- 🛡️ **Reward design + invariants**: [`docs/reward_design.md`](docs/reward_design.md)
+- 📋 **Eval cases + transcripts**: `eval/eval_cases/` (30 held-out cases) + [`demo/transcripts/`](demo/transcripts/)
+- ⚖️ **Scope + liability framing**: [`docs/what_this_is_not.md`](docs/what_this_is_not.md)
+- 🧱 **OpenEnv manifest**: [`openenv.yaml`](openenv.yaml)
+- 🐳 **Dockerfile** (HF Space runtime): [`Dockerfile`](Dockerfile)
 
 ## Workflow
 
