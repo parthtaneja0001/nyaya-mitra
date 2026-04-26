@@ -1,0 +1,34 @@
+phase: local_smoke
+model:
+  base_model: fake
+  load_in_4bit: false
+  use_unsloth: false
+lora:
+  r: 0
+  alpha: 0
+  dropout: 0.0
+  target_modules: []
+grpo:
+  num_generations: 1
+  learning_rate: 1.0e-5
+  beta: 0.04
+  max_prompt_length: 1024
+  max_completion_length: 256
+  temperature: 0.9
+  top_p: 0.95
+  num_episodes: 30
+  episode_batch_size: 1
+env:
+  max_turns: 6
+  difficulty_mix:
+    easy: 0.7
+    medium: 0.2
+    hard: 0.1
+logging:
+  wandb_project: nyaya-mitra-grpo
+  wandb_tags: [local_smoke]
+  log_every: 1
+  transcript_dump_every: 10
+  transcript_dump_count: 1
+  adapter_snapshot_every: 1000
+  metrics_jsonl: training/dumps/local_smoke_metrics.jsonl
