@@ -98,10 +98,22 @@ def build_unsloth_grpo_chat(cfg) -> tuple[Callable, Callable[[Path], None]]:
 
     FastLanguageModel.for_inference(model)
 
-    optimizer = torch.optim.AdamW(
-        [p for p in model.parameters() if p.requires_grad],
-        lr=cfg.learning_rate,
-    )
+    # prefer 8-bit adam to save ~3x optimizer-state memory on T4. falls back to
+    # fp32 AdamW if bitsandbytes is missing (cpu-only ci, etc.).
+    try:
+        from bitsandbytes.optim import AdamW8bit  # type: ignore
+
+        optimizer = AdamW8bit(
+            [p for p in model.parameters() if p.requires_grad],
+            lr=cfg.learning_rate,
+        )
+        logger.info("optimizer: AdamW8bit (bitsandbytes)")
+    except ImportError:
+        optimizer = torch.optim.AdamW(
+            [p for p in model.parameters() if p.requires_grad],
+            lr=cfg.learning_rate,
+        )
+        logger.info("optimizer: AdamW fp32 (bitsandbytes unavailable)")
 
     state: dict[str, Any] = {
         "model": model,
@@ -173,49 +185,59 @@ def _grpo_step(state: dict, episode_reward: float, model, tokenizer):
     if not buf:
         return {"loss": 0.0, "n_turns": 0, "reward": episode_reward}
 
-    model.train()
-    total_logprob_accum = 0.0
-    n_tokens = 0
+    # pre-tokenize all turns on cpu to count n_tokens up-front. this lets us do
+    # per-turn backward (releases activations between turns) without losing the
+    # exact 1/n_tokens normalizer.
+    turns_tok = []
     for turn in buf:
-        prompt_ids = turn["prompt_ids"].to(model.device)
-        completion_text = turn["completion_text"]
-        completion_ids = tokenizer(
-            completion_text,
+        cids = tokenizer(
+            turn["completion_text"],
             return_tensors="pt",
             add_special_tokens=False,
-        )["input_ids"][0].to(model.device)
-        if completion_ids.numel() == 0:
-            continue
+        )["input_ids"][0]
+        if cids.numel() > 0:
+            turns_tok.append((turn["prompt_ids"], cids))
+    n_tokens = sum(cids.numel() for _, cids in turns_tok)
+    if n_tokens == 0:
+        state["step_episode_buffer"] = []
+        return {"loss": 0.0, "n_turns": 0, "reward": episode_reward}
+
+    # centered reward against running baseline.
+    baseline = state.get("reward_ema", 0.0)
+    centered = episode_reward - baseline
+    state["reward_ema"] = 0.95 * baseline + 0.05 * episode_reward
+
+    model.train()
+    state["optimizer"].zero_grad()
+    loss_acc = 0.0
+    for prompt_ids_cpu, completion_ids_cpu in turns_tok:
+        prompt_ids = prompt_ids_cpu.to(model.device)
+        completion_ids = completion_ids_cpu.to(model.device)
         full_ids = torch.cat([prompt_ids, completion_ids], dim=0).unsqueeze(0)
         attn = torch.ones_like(full_ids)
         out = model(full_ids, attention_mask=attn)
         logits = out.logits[0, prompt_ids.shape[0] - 1 : -1, :]
         log_probs = F.log_softmax(logits, dim=-1)
         token_logprobs = log_probs.gather(1, completion_ids.unsqueeze(1)).squeeze(1)
-        total_logprob_accum = total_logprob_accum + token_logprobs.sum()
-        n_tokens += token_logprobs.numel()
+        # per-turn loss with global 1/n_tokens scaling — sum of these equals the
+        # original single-loss form, but each backward releases that turn's
+        # activations before the next forward (avoids stacking 6 turns of
+        # activations on a 14.5 gb T4).
+        turn_loss = -(centered * token_logprobs.sum()) / n_tokens
+        turn_loss.backward()
+        loss_acc += float(turn_loss.detach())
+        del out, logits, log_probs, token_logprobs, turn_loss
 
-    if n_tokens == 0:
-        state["step_episode_buffer"] = []
-        return {"loss": 0.0, "n_turns": 0, "reward": episode_reward}
-
-    # policy gradient: -E[reward * log_prob]. centered reward (subtract running
-    # baseline if available) keeps this stable.
-    baseline = state.get("reward_ema", 0.0)
-    centered = episode_reward - baseline
-    state["reward_ema"] = 0.95 * baseline + 0.05 * episode_reward
-
-    loss = -(centered * total_logprob_accum) / max(1, n_tokens)
-    state["optimizer"].zero_grad()
-    loss.backward()
-    torch.nn.utils.clip_grad_norm_([p for p in model.parameters() if p.requires_grad], max_norm=1.0)
+    torch.nn.utils.clip_grad_norm_(
+        [p for p in model.parameters() if p.requires_grad], max_norm=1.0
+    )
     state["optimizer"].step()
     model.eval()
 
     state["step_episode_buffer"] = []
     return {
-        "loss": float(loss.detach().cpu()),
-        "n_turns": len(buf),
+        "loss": loss_acc,
+        "n_turns": len(turns_tok),
         "n_tokens": int(n_tokens),
         "reward": float(episode_reward),
         "centered_reward": float(centered),
