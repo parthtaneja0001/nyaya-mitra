@@ -316,6 +316,23 @@ def train(
         rec = step_record_from_result(step, result)
         rolling.append(rec.total_reward)
 
+        # GRPO update hook. real-model chat exposes grpo_step(reward) which
+        # consumes the (prompt, completion) pairs buffered during the episode
+        # and applies one policy-gradient update. FakeChat doesn't have it.
+        grpo_info = None
+        grpo_step_fn = getattr(chat, "grpo_step", None)
+        if callable(grpo_step_fn):
+            try:
+                grpo_info = grpo_step_fn(rec.total_reward)
+            except Exception as exc:
+                logger.warning("grpo_step failed at step %d: %s", step, exc)
+                flush = getattr(chat, "flush_episode", None)
+                if callable(flush):
+                    try:
+                        flush()
+                    except Exception:
+                        pass
+
         if step % cfg.log_every == 0:
             row = {
                 "step": rec.step,
@@ -327,6 +344,7 @@ def train(
                 "components": rec.components,
                 "gate_counts": rec.gate_counts,
                 "rolling_mean_100": sum(rolling) / len(rolling) if rolling else 0.0,
+                "grpo": grpo_info,
             }
             jsonl_log(cfg.metrics_jsonl, row)
             if wandb_run is not None:
