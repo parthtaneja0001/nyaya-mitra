@@ -11,11 +11,14 @@
 #
 # also: set PYTORCH_ALLOC_CONF=expandable_segments:True in the env before launching
 # to reduce memory fragmentation.
-phase: timeboxed_t4
+phase: timeboxed_t4_resumed
 model:
   base_model: Qwen/Qwen2.5-0.5B-Instruct
   load_in_4bit: true
   use_unsloth: true
+  # resume from the adapter we trained in the first run. comment this line
+  # out to start from scratch.
+  resume_adapter: training/checkpoints/adapter_final_timeboxed_t4.lora
 
 lora:
   r: 8
@@ -48,12 +51,15 @@ env:
 
 logging:
   wandb_project: nyaya-mitra-grpo
-  wandb_tags: [phase1, t4, qwen-0.5b]
+  wandb_tags: [phase1, t4, qwen-0.5b, resumed]
   log_every: 1
   transcript_dump_every: 50
   transcript_dump_count: 1
   adapter_snapshot_every: 50
-  metrics_jsonl: training/dumps/phase1_t4_metrics.jsonl
+  # write to a NEW file so the original phase1_t4_metrics.jsonl (100 rows) is
+  # preserved. scripts/merge_metrics.py concatenates them with monotonic step
+  # numbers for a single combined curve.
+  metrics_jsonl: training/dumps/phase1_t4_metrics_resumed.jsonl
 
 abort:
   min_rolling_mean_at_500: 0.0
