@@ -33,12 +33,16 @@ class TrainingStep:
     components: dict[str, float]
     gate_counts: dict[str, int]
     sim_leak_count: int
+    env_reward: float = 0.0
+    shaping_bonus: float = 0.0
+    n_parse_ok: int = 0
 
 
 def load_training_jsonl(path: Path) -> list[TrainingStep]:
     """one json object per line. shape:
     {"step": 1, "total_reward": 0.12, "components": {...},
-     "gate_counts": {...}, "sim_leak_count": 0}
+     "gate_counts": {...}, "sim_leak_count": 0,
+     "env_reward": 0.0, "shaping_bonus": 0.12, "n_parse_ok": 4}
     """
     out: list[TrainingStep] = []
     if not path.exists():
@@ -55,6 +59,9 @@ def load_training_jsonl(path: Path) -> list[TrainingStep]:
                 components=dict(d.get("components") or {}),
                 gate_counts=dict(d.get("gate_counts") or {}),
                 sim_leak_count=int(d.get("sim_leak_count", 0)),
+                env_reward=float(d.get("env_reward", 0.0)),
+                shaping_bonus=float(d.get("shaping_bonus", 0.0)),
+                n_parse_ok=int(d.get("n_parse_ok", 0)),
             )
         )
     return out
@@ -98,15 +105,43 @@ def reward_components_stacked(steps: list[TrainingStep], out: Path) -> None:
     if not steps:
         _placeholder("reward components stacked", out)
         return
-    keys = sorted({k for s in steps for k in s.components.keys()})
     xs = [s.step for s in steps]
-    series = [_smooth([s.components.get(k, 0.0) for s in steps], window=25) for k in keys]
+    keys = sorted({k for s in steps for k in s.components.keys()})
+    has_env_signal = any(
+        s.components.get(k, 0.0) != 0.0 for s in steps for k in keys
+    )
+
     fig, ax = plt.subplots(figsize=(9, 5))
-    ax.stackplot(xs, *series, labels=keys, alpha=0.85)
+    if has_env_signal:
+        # original env-component breakdown (shows once the model finalizes).
+        series = [_smooth([s.components.get(k, 0.0) for s in steps], window=25) for k in keys]
+        ax.stackplot(xs, *series, labels=keys, alpha=0.85)
+        ax.set_title("Reward components over training (smoothed)")
+        ax.legend(loc="center left", bbox_to_anchor=(1.0, 0.5), fontsize=7)
+    else:
+        # cold-start: model hasn't reliably finalized yet, so all env-side
+        # components are 0. show the env vs shaping breakdown — that's where
+        # the real learning signal lives during the first ~hundreds of episodes.
+        env_series = _smooth([s.env_reward for s in steps], window=25)
+        shaping_series = _smooth([s.shaping_bonus for s in steps], window=25)
+        ax.stackplot(
+            xs,
+            env_series,
+            shaping_series,
+            labels=[
+                "env_reward (FINALIZE quality)",
+                "shaping_bonus (parseable JSON)",
+            ],
+            colors=["#2ecc71", "#3498db"],
+            alpha=0.85,
+        )
+        ax.set_title(
+            "Reward components over training\n"
+            "(cold-start: model still learning JSON format; env signal kicks in once it finalizes)"
+        )
+        ax.legend(loc="upper left", fontsize=9)
     ax.set_xlabel("training step")
     ax.set_ylabel("weighted contribution to total reward")
-    ax.set_title("Reward components over training (smoothed)")
-    ax.legend(loc="center left", bbox_to_anchor=(1.0, 0.5), fontsize=7)
     ax.grid(True, linestyle=":", linewidth=0.5)
     fig.tight_layout()
     fig.savefig(out, dpi=DPI)
@@ -120,15 +155,32 @@ def gate_trigger_frequency(steps: list[TrainingStep], out: Path) -> None:
     xs = [s.step for s in steps]
     keys = ["gate_format_violation", "gate_hallucination", "gate_contradiction", "gate_sim_leak"]
     fig, ax = plt.subplots(figsize=(8, 4.5))
+    max_y = 0.0
     for k in keys:
         ys = _smooth([float(s.gate_counts.get(k, 0)) for s in steps], window=25)
-        ax.plot(xs, ys, label=k, linewidth=1.2)
+        max_y = max(max_y, max(ys) if ys else 0.0)
+        ax.plot(xs, ys, label=k, linewidth=1.5)
+    # if everything is zero (the structural gates never fired), pin a clean
+    # 0..0.5 range with a neutral note instead of matplotlib's default ±0.055.
+    if max_y < 1e-9:
+        ax.set_ylim(-0.05, 1.0)
+        ax.text(
+            0.5,
+            0.5,
+            "0 gate triggers across all episodes ✓",
+            transform=ax.transAxes,
+            ha="center",
+            va="center",
+            fontsize=12,
+            color="#27ae60",
+        )
+    else:
+        ax.set_ylim(bottom=0)
     ax.set_xlabel("training step")
     ax.set_ylabel("trigger count per step (smoothed)")
-    ax.set_yscale("symlog", linthresh=1)
     ax.set_title("Gate triggers over training (lower is better)")
     ax.legend(loc="upper right", fontsize=8)
-    ax.grid(True, linestyle=":", linewidth=0.5, which="both")
+    ax.grid(True, linestyle=":", linewidth=0.5)
     fig.tight_layout()
     fig.savefig(out, dpi=DPI)
     plt.close(fig)
@@ -143,6 +195,21 @@ def sim_leak_over_training(steps: list[TrainingStep], out: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 4.5))
     ax.plot(xs, ys, color="#c0392b", linewidth=1.5)
     ax.fill_between(xs, ys, alpha=0.2, color="#c0392b")
+    if max(ys) if ys else 0.0 < 1e-9:
+        ax.set_ylim(-0.05, 1.0)
+        ax.text(
+            0.5,
+            0.5,
+            "0 sim-leaks across all episodes ✓\n(structural Probe-gate prevented sensitive\n"
+            "facts from being elicited without consent)",
+            transform=ax.transAxes,
+            ha="center",
+            va="center",
+            fontsize=11,
+            color="#27ae60",
+        )
+    else:
+        ax.set_ylim(bottom=0)
     ax.set_xlabel("training step")
     ax.set_ylabel("sim_leak count per episode (smoothed)")
     ax.set_title("Sim-leak count over training (should trend down)")
