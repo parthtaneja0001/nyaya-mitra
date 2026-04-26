@@ -195,7 +195,8 @@ def sim_leak_over_training(steps: list[TrainingStep], out: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 4.5))
     ax.plot(xs, ys, color="#c0392b", linewidth=1.5)
     ax.fill_between(xs, ys, alpha=0.2, color="#c0392b")
-    if max(ys) if ys else 0.0 < 1e-9:
+    max_y = max(ys) if ys else 0.0
+    if max_y < 1e-9:
         ax.set_ylim(-0.05, 1.0)
         ax.text(
             0.5,
