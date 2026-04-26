@@ -18,11 +18,11 @@ The agent's terminal output is a structured `ActionPlan`, not a free-text reply.
 
 ## Not exhaustive on coverage
 
-Current KB covers 6 schemes + 4 legal frameworks + 20 DLSAs across 10 states. PLAN.md sets a 30/15/all-states target. Many real-world situations (e.g., agricultural input subsidies, MSP procurement, RTI requests, women-specific health scheme variants, state-specific labour codes) are out of scope for the v1 environment. The architecture supports growth — new entries are JSON files + a single Python checker — but the demo is **not** a comprehensive welfare oracle.
+Current KB covers 6 schemes + 4 legal frameworks + 20 DLSAs across 10 states. The original target was 30 schemes + 15 frameworks + all-states coverage. Many real-world situations (e.g., agricultural input subsidies, MSP procurement, RTI requests, women-specific health scheme variants, state-specific labour codes) are out of scope for the v1 environment. The architecture supports growth — new entries are JSON files + a single Python checker — but the demo is **not** a comprehensive welfare oracle.
 
 ## Not a real citizen sim (yet)
 
-The current `CitizenSimulator` is "smart-canned" — deterministic, profile-driven, templated utterances across en / hi / hinglish, with trust gating on sensitive disclosures. It is **not** a frozen LLM. PLAN.md A.4 calls for a Qwen 2.5 3B Instruct (or Llama 3.2 3B) frozen-llm sim with the explicit hard rules (never volunteer sensitive facts, speak at literacy level, never contradict, never invent). That's the next track-A pickup.
+The current `CitizenSimulator` is "smart-canned" — deterministic, profile-driven, templated utterances across en / hi / hinglish, with trust gating on sensitive disclosures. It is **not** a frozen LLM. A future iteration would swap in a Qwen 2.5 3B Instruct (or Llama 3.2 3B) frozen-llm sim with the explicit hard rules (never volunteer sensitive facts, speak at literacy level, never contradict, never invent).
 
 The smart-canned sim is sufficient to exercise the reward pipeline and demonstrate end-to-end training, but it produces a much narrower distribution of utterances than a real LLM would.
 

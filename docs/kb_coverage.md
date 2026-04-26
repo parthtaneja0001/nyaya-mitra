@@ -1,6 +1,6 @@
 # KB coverage
 
-Auto-tracked Track A artifact. Refresh on every KB PR.
+KB inventory. Refresh on every KB change.
 
 ## Schemes (6 / 30 target)
 
@@ -30,6 +30,6 @@ Minimal v1: NALSA central + Punjab SLSA + DLSA Ludhiana.
 
 - 24 schemes to add (target 30)
 - 11 frameworks to add (target 15)
-- Bring per-checker test count up to PLAN.md target of >=8 each
+- Bring per-checker test count up to >=8 each
 - Expand DLSA directory with at least one DLSA per major state
 - Add fact-extractor patterns for the new fields (rural, secc, wage_worker, pregnant, defective_goods, etc.)

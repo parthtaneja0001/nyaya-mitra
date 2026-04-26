@@ -1,101 +1,26 @@
-"""
-contract test for the seam between tracks A and B.
+"""structural invariants of the interface package + end-to-end env round-trip.
 
-if this passes, both tracks can integrate cleanly.
-if it fails, the interface has drifted — STOP and re-sync.
+these used to enforce a two-track ownership split. now there's one owner, so we
+only keep the invariants that still buy us safety:
 
-most checks are pytest.skip stubs that get filled in as tracks land.
-the cross-track-imports check is live from day one — it's the mechanical
-guardrail that prevents silent coupling.
+- interface package imports without side effects
+- reward keys are unique strings
+- legal-route schema rejects construction without a free_legal_aid_contact
+  (this is the structural anti-liability rule)
+- ActionPlan round-trips losslessly through json
+- end-to-end env episode produces a complete reward breakdown
+- env.state() is gated behind NYAYA_DEBUG=1
+- aggregator emits every interface.ALL_KEYS
+- every kb json validates against interface/kb_schemas.py
 """
 
 from __future__ import annotations
 
-import ast
-from pathlib import Path
-
 import pytest
-
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-SRC_ROOT = REPO_ROOT / "src" / "nyaya_mitra"
-
-TRACK_A_PACKAGES = ("env", "citizen", "knowledge", "profile")
-TRACK_B_PACKAGES = ("rewards", "case_gen", "advisor")
-TRACK_B_TOPLEVEL_DIRS = ("training", "eval")
-ALLOWED_CROSS_IMPORTS = {"nyaya_mitra.env.client"}
-
-
-def _module_imports(path: Path) -> set[str]:
-    tree = ast.parse(path.read_text(encoding="utf-8"))
-    out: set[str] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            for alias in node.names:
-                out.add(alias.name)
-        elif isinstance(node, ast.ImportFrom):
-            if node.level == 0 and node.module:
-                out.add(node.module)
-    return out
-
-
-def _is_in_packages(import_name: str, packages: tuple[str, ...]) -> bool:
-    for pkg in packages:
-        prefix = f"nyaya_mitra.{pkg}"
-        if import_name == prefix or import_name.startswith(prefix + "."):
-            return True
-    return False
-
-
-def _scan_dir(root: Path) -> list[Path]:
-    return [p for p in root.rglob("*.py") if "__pycache__" not in p.parts]
-
-
-def test_no_cross_track_imports():
-    """
-    track A code may not import track B internals; track B may not import track A internals.
-    only allowed cross-import is nyaya_mitra.env.client (the public http client).
-    both sides freely import nyaya_mitra.interface.
-    """
-    violations: list[str] = []
-
-    for pkg in TRACK_A_PACKAGES:
-        pkg_root = SRC_ROOT / pkg
-        if not pkg_root.exists():
-            continue
-        for py in _scan_dir(pkg_root):
-            for imp in _module_imports(py):
-                if imp in ALLOWED_CROSS_IMPORTS:
-                    continue
-                if _is_in_packages(imp, TRACK_B_PACKAGES):
-                    violations.append(f"[A] {py.relative_to(REPO_ROOT)} imports [B] {imp}")
-
-    for pkg in TRACK_B_PACKAGES:
-        pkg_root = SRC_ROOT / pkg
-        if not pkg_root.exists():
-            continue
-        for py in _scan_dir(pkg_root):
-            for imp in _module_imports(py):
-                if imp in ALLOWED_CROSS_IMPORTS:
-                    continue
-                if _is_in_packages(imp, TRACK_A_PACKAGES):
-                    violations.append(f"[B] {py.relative_to(REPO_ROOT)} imports [A] {imp}")
-
-    for top in TRACK_B_TOPLEVEL_DIRS:
-        top_root = REPO_ROOT / top
-        if not top_root.exists():
-            continue
-        for py in _scan_dir(top_root):
-            for imp in _module_imports(py):
-                if imp in ALLOWED_CROSS_IMPORTS:
-                    continue
-                if _is_in_packages(imp, TRACK_A_PACKAGES):
-                    violations.append(f"[B] {py.relative_to(REPO_ROOT)} imports [A] {imp}")
-
-    assert not violations, "cross-track imports detected:\n  " + "\n  ".join(violations)
 
 
 def test_interface_imports_cleanly():
-    """interface is the only shared package and must import without side effects."""
+    """interface package imports without side effects and exposes the canonical names."""
     import nyaya_mitra.interface as iface
 
     assert hasattr(iface, "AdvisorAction")
@@ -115,10 +40,9 @@ def test_reward_keys_are_unique_strings():
 
 
 def test_action_plan_requires_legal_aid_contact():
-    """
-    structural anti-liability rule: every legal route must carry a free_legal_aid_contact.
-    pydantic should reject construction without it.
-    """
+    """structural anti-liability rule. pydantic should reject a legal route
+    without a free_legal_aid_contact — this is what makes "give standalone
+    advice" un-representable in the env."""
     from pydantic import ValidationError
 
     from nyaya_mitra.interface import LegalRouteRecommendation
@@ -161,7 +85,7 @@ def test_action_plan_round_trips_through_json():
 
 
 def test_full_episode_with_stub_advisor():
-    """end-to-end: env reset → step(Ask) → step(Finalize) with track B's reward fn wired in.
+    """end-to-end: env reset → step(Ask) → step(Finalize) with the reward fn wired in.
     asserts every key in interface.ALL_KEYS is present in the terminal info breakdown."""
     from nyaya_mitra.citizen.extractor import FactExtractor
     from nyaya_mitra.citizen.simulator import CitizenSimulator
@@ -244,10 +168,9 @@ def test_state_locked_without_debug_env(monkeypatch):
 
 
 def test_aggregator_emits_all_keys():
-    """track B aggregator must emit every key in interface.ALL_KEYS, including TOTAL.
+    """compute_reward must emit every key in interface.ALL_KEYS, including TOTAL.
 
-    uses an in-test fake kb so this stays self-contained. depends on
-    nyaya_mitra.rewards.compute_reward and the public RewardContext shape.
+    uses an in-test fake kb so this stays self-contained.
     """
     from nyaya_mitra.interface import (
         ALL_KEYS,

@@ -1,6 +1,6 @@
 # Reward design
 
-Owned by Track B. Source of truth for weights, gate semantics, and the public api the env consumes.
+Source of truth for weights, gate semantics, and the public api the env consumes.
 
 ## Public api
 
@@ -11,7 +11,7 @@ Owned by Track B. Source of truth for weights, gate semantics, and the public ap
 - `compute_shaping(turn_index, action, revealed_this_turn, sim_leak, citizen_literacy) -> dict[str, float]`
 - `KnowledgeBase` (Protocol)
 
-Track A never imports any of this directly (the contract test enforces that). Wiring happens externally — a shared bootstrap or a `scripts/` glue module imports `nyaya_mitra.rewards.kb_adapter.DuckTypedKB`, wraps Track A's `KnowledgeBase` instance, and passes the result into `make_env_reward_fn(kb)`. The returned callable matches Track A's `RewardFn` signature `(profile, plan, transcript, elicited_facts) -> dict[str, float]`.
+Wiring happens via `scripts/wire_rewards.py:build_env(...)` which imports `nyaya_mitra.rewards.kb_adapter.DuckTypedKB`, wraps the `KnowledgeBase` instance, and passes the result into `make_env_reward_fn(kb)`. The returned callable matches the env's `RewardFn` signature `(profile, plan, transcript, elicited_facts) -> dict[str, float]`.
 
 ## Weights (PLAN B.2 #3 corrected decomposition)
 
@@ -37,7 +37,7 @@ Caps: deterministic ≤ 0.15, LLM-judge ≤ 0.05. `validate_weights()` runs at i
 
 ## Per-turn shaping (PLAN B.2 #4)
 
-Shaping is computed by Track A's env each step (via `compute_shaping(...)`) and accumulated into a running dict that the env passes to the aggregator at terminal step under `info["shaping_running"]`. The aggregator caps positive shaping at +0.4 per episode (negatives uncapped) and adds it to the total.
+Shaping is computed by the env each step (via `compute_shaping(...)`) and accumulated into a running dict that the env passes to the aggregator at terminal step under `info["shaping_running"]`. The aggregator caps positive shaping at +0.4 per episode (negatives uncapped) and adds it to the total.
 
 | Shaping key | Trigger | Value |
 |---|---|---|
@@ -74,20 +74,20 @@ The following properties are tested and must not regress:
 - Per-turn shaping cannot exceed +0.4 over an episode (test: `test_positive_cap_scales_proportionally_when_exceeded`).
 - Sim-leak credit is removed without ending the episode (test: `test_sim_leak_zeroes_elicitation_shaping`).
 
-## What Track A passes through
+## What the env passes through
 
-Track A's env surfaces these per-turn signals; the aggregator reads them at terminal step:
+The env surfaces these per-turn signals; the aggregator reads them at terminal step:
 
 - `info["sim_leak"]: bool` — set by env's `_detect_sim_leak`.
-- `info["negated_facts"]: list[str]` — to be set by Track A's extractor in a future PR. Contradiction gate already reads it; tolerates absence.
+- `info["negated_facts"]: list[str]` — set by the extractor's negation pass. Contradiction gate consumes via `Turn.info["negated_facts"]`.
 - `info["format_violation"]: bool` — for actions rejected at schema level (defaults False).
 - `info["shaping_running"]: dict[str, float]` — accumulated shaping deltas keyed by `SHAPING_KEYS`.
 
-All of these are optional with safe defaults. The reward function tolerates Track A delivering nothing extra; in that case shaping defaults to zeros and contradiction falls back to the basic "must appear in elicited_facts" check.
+All of these are optional with safe defaults. The reward function tolerates a missing field by defaulting to a safe value (shaping defaults to zeros, contradiction falls back to "must appear in elicited_facts").
 
 ## Relevant-facts contract (extractor → reward)
 
-`fact_coverage` and the integration bonus rely on knowing which fact IDs each scheme/framework's checker reads from the profile. **Canonical source: `src/nyaya_mitra/profile/relevant_facts.py:_RELEVANT_BY_ID` (Track A).** The Track-B-side mirror lives at `src/nyaya_mitra/rewards/kb_adapter.py:_DEFAULT_RELEVANT_FACTS` and must agree exactly.
+`fact_coverage` and the integration bonus rely on knowing which fact IDs each scheme/framework's checker reads from the profile. **Canonical source: `src/nyaya_mitra/profile/relevant_facts.py:_RELEVANT_BY_ID`.** The mirror in `src/nyaya_mitra/rewards/kb_adapter.py:_DEFAULT_RELEVANT_FACTS` must agree exactly with it.
 
 Two regression tests guard this:
 
@@ -96,7 +96,7 @@ Two regression tests guard this:
 
 The long-term plan is to move the mapping into KB JSON so neither side owns a separate dict; tracked as a separate `[interface]` task on the board.
 
-Current contract — fact IDs Track A's extractor must emit when the citizen reveals these realities:
+Current contract — fact IDs the extractor emits when the citizen reveals these realities:
 
 | Source | Fact IDs |
 |---|---|

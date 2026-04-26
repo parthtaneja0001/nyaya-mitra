@@ -35,11 +35,11 @@ Have you run scripts/run_smoke.sh successfully?
 git clone https://github.com/parthtaneja0001/nyaya-mitra.git
 cd nyaya-mitra
 python -m venv .venv && source .venv/bin/activate
-pip install -e ".[track_a,track_b,dev,train]"
+pip install -e ".[env,rewards,train,dev]"
 pip install vllm  # speeds up Unsloth fast_inference path
 
 # verify
-pytest tests/track_b -q  # should be 192 passing
+pytest tests -q  # should be 453 passing
 python -c "from training._real_policy import build_unsloth_grpo_chat; print('imports ok')"
 
 # auth

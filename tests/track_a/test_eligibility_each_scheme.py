@@ -1,5 +1,5 @@
 """parametrized eligibility tests, one block per scheme.
-PLAN.md target is >=8 cases per scheme; this is the v1 cut."""
+target is >=8 cases per scheme; this is the v1 cut."""
 
 from __future__ import annotations
 

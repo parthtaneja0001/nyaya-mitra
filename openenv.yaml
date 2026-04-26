@@ -1,9 +1,6 @@
+spec_version: 1
 name: nyaya-mitra
-version: 0.1.0
-description: paralegal-cum-welfare-advisor environment for vulnerable Indian citizens
-entrypoint: src.nyaya_mitra.env.server:app
-runtime:
-  python: "3.11"
-  framework: fastapi
-host: 0.0.0.0
+type: space
+runtime: fastapi
+app: nyaya_mitra.env.server:app
 port: 8000

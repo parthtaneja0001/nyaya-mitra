@@ -1,49 +1,65 @@
 # Architecture
 
-The seam between Track A (Data + World) and Track B (Agent + Learning). Jointly owned `[S]`; edits go through a cross-track-approved PR.
-
-## The three layers
+Nyaya Mitra is an OpenEnv-compliant environment plus a reward function plus a training pipeline. Three layers:
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                                                                      │
-│  Track A — World                              Track B — Agent        │
-│  src/nyaya_mitra/                             src/nyaya_mitra/       │
-│  ├─ env/         (FastAPI + reset/step)       ├─ rewards/            │
-│  ├─ citizen/     (sim + extractor)            │  ├─ components/      │
-│  ├─ knowledge/   (KB + checkers)              │  ├─ gates/           │
-│  └─ profile/     (seeds + ground-truth)       │  ├─ aggregator       │
-│                                               │  ├─ shaping          │
-│                                               │  └─ kb_protocol      │
-│                                               ├─ case_gen/           │
-│                                               └─ advisor/            │
-│                                               training/, eval/, demo/│
-│                                                                      │
-│  ─────────────────  src/nyaya_mitra/interface/  ─────────────────    │
-│                          (shared schemas)                            │
-│  AdvisorAction │ ActionPlan │ CitizenObservation │ CitizenProfile    │
-│  reward_keys   │ kb_schemas                                          │
-│                                                                      │
-│  ─────────────────  scripts/wire_rewards.py  ─────────────────       │
-│                  (the only cross-track import)                       │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────┐
+│  HTTP layer (canonical OpenEnv)                                          │
+│    openenv.core.env_server.http_server.create_app(...)                   │
+│    /reset · /step · /state · /metadata · /schema · /docs · /healthz     │
+│    /mcp · /ws (canonical OpenEnv multi-transport)                        │
+├──────────────────────────────────────────────────────────────────────────┤
+│  OpenEnv-conformant env  src/nyaya_mitra/env/openenv_env.py             │
+│    NyayaEnvironment(Environment[NyayaAction, NyayaObservation, NyayaState])
+│      ├── rubric: Sequential(Gate, Gate, Gate, WeightedSum(11 components))│
+│      ├── reset(seed, episode_id) → NyayaObservation                      │
+│      ├── step(NyayaAction) → NyayaObservation (reward + done on it)      │
+│      └── state → NyayaState  (public; no profile/ground-truth leak)      │
+├──────────────────────────────────────────────────────────────────────────┤
+│  Domain layer  src/nyaya_mitra/                                          │
+│    citizen/   ── extractor + smart-canned simulator + 72 golden tests   │
+│    knowledge/ ── 6 schemes + 4 frameworks + 20 DLSAs across 10 states   │
+│    profile/   ── 14 seed profiles, derive_ground_truth from KB checkers │
+│    rewards/   ── 11 components + 4 gates + per-turn shaping             │
+│                  + openenv_rubric.py (Sequential/Gate/WeightedSum tree)  │
+│    case_gen/  ── adversarial profile generator (Phase 2)                 │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
-## What crosses the seam
+## OpenEnv conformance
 
-The interface package is purely Pydantic + literal types — no logic. Both tracks import freely from `nyaya_mitra.interface`. Neither track imports from the other's `src/` packages; this is **mechanically enforced** by `tests/integration/test_no_cross_track_imports` (an AST walk over `src/nyaya_mitra/`).
+- `NyayaEnvironment` subclasses `openenv.core.env_server.interfaces.Environment[ActT, ObsT, StateT]`.
+- `NyayaAction` subclasses `openenv.core.env_server.types.Action`.
+- `NyayaObservation` subclasses `openenv.core.env_server.types.Observation` — `done` and `reward` are fields on the observation, per the OpenEnv contract.
+- `NyayaState` subclasses `openenv.core.env_server.types.State` (carries `episode_id` + `step_count`).
+- HTTP server is `openenv.core.create_app(env, action_cls, observation_cls)` — not a hand-rolled FastAPI.
+- `openenv.yaml` matches the canonical reference (`spec_version: 1`, `type: space`, `runtime: fastapi`).
+- `tests/integration/test_openenv_conformance.py` mechanically verifies inheritance + rubric structure + route exposure + manifest format (10 tests).
 
-The single legitimate cross-track point is `scripts/wire_rewards.py:build_env(...)` — a helper that constructs a `NyayaMitraEnv` with both Track B's `compute_reward` and `compute_shaping` injected as constructor args. This is the import-allowed entry point Track B's training loop uses.
+## Rubric system (composable, OpenEnv-native)
 
-The contract:
-- Track A's env exposes `reward_fn: RewardFn | None` and `shaping_fn: ShapingFn | None` constructor args. Both default to `None` (env runs cleanly without rewards).
-- Track B publishes `make_env_reward_fn(kb)` and `compute_shaping(...)` matching the env's expected callable shapes.
-- Track A's KB satisfies the read-only `nyaya_mitra.rewards.kb_protocol.KnowledgeBase` Protocol via the `DuckTypedKB` adapter.
+Per the OpenEnv RFC 004 design, `env.rubric` is a tree of `Rubric` nodes:
+
+```python
+Sequential(                                # fail-fast on gates
+    Gate(FormatRubric()),                  # → 0 if plan malformed
+    Gate(HallucinationRubric()),           # → 0 if unknown scheme/framework/contact id
+    Gate(ContradictionRubric()),           # → 0 if rationale_facts contradict citizen
+    WeightedSum(                           # → weighted sum of 11 components
+        rubrics=[SchemePrecision, SchemeRecall, LegalPrecision, LegalRecall,
+                 DocumentAccuracy, ProceduralCorrectness, FactCoverage,
+                 IntegrationBonus, SensitivityCorrectness, TurnEfficiency,
+                 DignityJudge],
+        weights=[0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.12, 0.15, 0.05, 0.03, 0.05],
+    ),
+)
+```
+
+Training infra introspects scores via `for name, r in env.rubric.named_rubrics(): r.last_score`.
 
 ## Per-turn info passthrough (env → reward)
 
-The env writes the following into `info` on each step; the aggregator reads them at terminal step:
+The internal env writes the following into `info` on each step; the aggregator reads them at terminal step:
 
 | key | when | purpose |
 |---|---|---|
@@ -51,24 +67,15 @@ The env writes the following into `info` on each step; the aggregator reads them
 | `info["negated_facts"]` (per-step list) | always | contradiction gate consumes via `Turn.info["negated_facts"]` |
 | `info["format_violation"]` (terminal bool) | terminal | format gate hint |
 | `info["shaping_running"]` (terminal dict) | terminal | accumulated per-turn shaping deltas |
-| `info["reward_breakdown"]` (terminal dict) | terminal, populated by env's call to `reward_fn` | the final 19-key breakdown |
+| `info["reward_breakdown"]` (terminal dict) | terminal | the 19-key breakdown |
 
-All optional with safe defaults; the reward fn tolerates a missing field (returns 0.0 for the corresponding key) so old transcripts don't break.
+All optional with safe defaults; missing fields default to 0.
 
-## File-ownership tags
+## CI
 
-Every file in the repo is tagged `[A]`, `[B]`, or `[S]` in `REPO_STRUCTURE.md`. CODEOWNERS enforces that `[A]` files require @parthtaneja0001 review, `[B]` files require @aPassie review, and `[S]` files require both.
+Single workflow `.github/workflows/ci.yml`: installs `[env,rewards,dev]`, runs `ruff check .`, runs `pytest tests`. Green on every push to main + every PR.
 
-## CI structure
-
-Three workflows so a flaky test on one side never blocks the other:
-- `ci-track-a.yml` — runs `pytest tests/track_a/` on track-A file changes
-- `ci-track-b.yml` — runs `pytest tests/track_b/` on track-B file changes
-- `ci-integration.yml` — runs `pytest tests/integration/` plus `ruff check` on every PR to `main`
-
-The integration workflow is the gate: if `test_no_cross_track_imports` or any contract test fails, the seam has drifted and the merge is blocked.
-
-## Anti-reward-hacking invariants (where they live)
+## Anti-reward-hacking invariants
 
 | Invariant | Where it's enforced |
 |---|---|
@@ -76,20 +83,11 @@ The integration workflow is the gate: if `test_no_cross_track_imports` or any co
 | Soft reward components sum to 1.0 | `rewards/weights.py:validate_weights()` (runs at import) |
 | No LLM-judge component > 5% | same |
 | No deterministic component > 15% | same |
-| Hallucinated scheme/framework/contact_id → `total = -1.0` | `rewards/gates/hallucination.py` |
+| Hallucinated id → `total = -1.0` | `rewards/gates/hallucination.py` |
 | Citizen-contradicted rationale_facts → `total = -1.0` | `rewards/gates/contradiction.py` |
 | sim_leak (sensitive disclosed without matching Probe) | env's `_detect_sim_leak` + `rewards/gates/sim_leak_passthrough.py` |
-| Per-turn shaping capped at +0.4/episode | `rewards/shaping.py:cap_positive_shaping` + `rewards/aggregator.py` |
-| Cross-track imports forbidden | `tests/integration/test_no_cross_track_imports` (AST walk) |
+| Per-turn shaping capped at +0.4/episode | `rewards/shaping.py:cap_positive_shaping` |
 | Same seed → same transcript | `tests/track_a/test_determinism.py` (sha256 hash compare) |
+| OpenEnv conformance | `tests/integration/test_openenv_conformance.py` |
 
-See [`docs/reward_design.md`](reward_design.md) for the full reward decomposition + the test invariants Track B maintains.
-
-## When to change the interface
-
-If you find yourself wanting to add a field to `interface/plan.py` or `interface/observations.py`:
-1. Open an `[interface]` PR — both tracks must approve.
-2. Update `tests/integration/test_interface_contract.py` in the same commit.
-3. Coordinate the producer side (Track A: env emits) and consumer side (Track B: reward reads) updates to land before / together with the interface change, never after.
-
-Most "I want to add a field" instincts should land on one side of the seam, not in the interface itself.
+See [`reward_design.md`](reward_design.md) for the full reward decomposition.

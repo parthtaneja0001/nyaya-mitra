@@ -1,5 +1,5 @@
 """parametrized applicability tests, one block per framework.
-PLAN.md target is >=8 cases per framework; this is the v1 cut."""
+target is >=8 cases per framework; this is the v1 cut."""
 
 from __future__ import annotations
 

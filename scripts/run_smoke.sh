@@ -5,7 +5,7 @@
 #
 # pre-flight:
 #   - run on a host with CUDA + ~24GB GPU
-#   - pip install -e ".[track_a,track_b,train]"
+#   - pip install -e ".[env,rewards,train,dev]"
 #   - export HF_TOKEN=hf_xxx (for any gated models; Qwen 2.5 0.5B is open)
 #   - export WANDB_API_KEY=... (optional)
 set -euo pipefail

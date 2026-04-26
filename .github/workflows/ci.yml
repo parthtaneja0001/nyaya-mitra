@@ -1,4 +1,4 @@
-name: ci-integration
+name: ci
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  contract:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,8 +16,8 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
       - name: install
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[env,rewards,dev]"
       - name: lint
         run: ruff check .
-      - name: contract test
-        run: pytest tests/integration -v
+      - name: test
+        run: pytest tests -v

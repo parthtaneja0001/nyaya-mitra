@@ -1,6 +1,6 @@
 # Deploy to Hugging Face Spaces
 
-The env runs as a Docker container on a Hugging Face Space. Track A owns this flow.
+The env runs as a Docker container on a Hugging Face Space. **The Space URL is the entire submission artifact** — judges pull the env from there to evaluate it.
 
 ## One-time setup
 
@@ -28,16 +28,21 @@ The script:
 - Pushes the current branch to the Space's `main`
 - Prints the Space URL
 
-The Space takes ~2 minutes to build the Docker image. Once up, smoke test:
-```
-curl https://huggingface.co/spaces/$HF_SPACE_REPO/healthz
-# → {"status":"ok"}
+The Space takes ~2 minutes to build the Docker image. Once up, smoke-test the canonical OpenEnv routes:
 
-curl https://huggingface.co/spaces/$HF_SPACE_REPO/
-# → {"name":"nyaya-mitra", "endpoints": {...}}
+```
+SPACE=https://huggingface.co/spaces/$HF_SPACE_REPO
+
+curl $SPACE/healthz                          # → {"status":"ok"}
+curl $SPACE/health                           # → {"status":"healthy"}  (canonical OpenEnv)
+curl $SPACE/metadata                         # → EnvironmentMetadata JSON
+curl $SPACE/schema                           # → JSON schemas for action/observation/state
+curl -L $SPACE/docs                          # → Swagger UI HTML
 ```
 
-## Hitting the deployed env from track-b training
+Each request creates a fresh env on the HTTP transport (per OpenEnv's stateless-HTTP design). For multi-turn dialogue use the `/ws` WebSocket endpoint or `/mcp` MCP transport.
+
+## Hitting the deployed env from training
 
 ```
 import os
@@ -82,5 +87,5 @@ This is added by `scripts/deploy_space.sh` (or done manually in the Space's UI).
 ## Troubleshooting
 
 - **Build fails on `uv pip install`**: usually a missing system lib. Check the Space build logs; add the apt package to the Dockerfile's first stage.
-- **Space crashes immediately**: check `docker logs` equivalent in the Space's "Logs" tab. Most common: missing dependency in `[track_a]` group.
+- **Space crashes immediately**: check `docker logs` equivalent in the Space's "Logs" tab. Most common: missing dependency in `[env]` group.
 - **Healthcheck flapping**: the healthcheck pings `/healthz` every 30s with a 3s timeout. If startup is slow, adjust `--start-period` in the Dockerfile.
