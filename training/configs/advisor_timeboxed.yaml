@@ -1,0 +1,50 @@
+# timeboxed Phase 1 — fits in ~2h on a colab T4 with Qwen 2.5 0.5B.
+# trades model size + episode count for wall-clock; produces a real (albeit
+# modest) reward curve so the demo has training evidence.
+#
+# upgrade-paths once you have more time/budget:
+#   - swap base_model to Qwen/Qwen2.5-3B-Instruct on an A10G (20GB+) for richer
+#     output distribution. each ep ~30-60s instead of ~30s.
+#   - bump num_episodes to 500 (the original PLAN target) once you have ~6h.
+phase: timeboxed_warmup
+model:
+  base_model: Qwen/Qwen2.5-0.5B-Instruct
+  load_in_4bit: true
+  use_unsloth: true
+
+lora:
+  r: 8
+  alpha: 16
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj]
+
+grpo:
+  num_generations: 2
+  learning_rate: 1.0e-5
+  beta: 0.04
+  max_prompt_length: 2048
+  max_completion_length: 320
+  temperature: 0.9
+  top_p: 0.95
+  num_episodes: 100
+  episode_batch_size: 1
+
+env:
+  max_turns: 8
+  difficulty_mix:
+    easy: 0.7
+    medium: 0.3
+    hard: 0.0
+
+logging:
+  wandb_project: nyaya-mitra-grpo
+  wandb_tags: [phase1, timeboxed, qwen-0.5b]
+  log_every: 1
+  transcript_dump_every: 50
+  transcript_dump_count: 2
+  adapter_snapshot_every: 50
+  metrics_jsonl: training/dumps/phase1_timeboxed_metrics.jsonl
+
+abort:
+  # 100 episodes — no abort; ship whatever curve we get.
+  min_rolling_mean_at_500: 0.0
