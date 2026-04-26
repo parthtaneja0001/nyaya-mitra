@@ -56,11 +56,21 @@ def build_unsloth_grpo_chat(cfg) -> tuple[Callable, Callable[[Path], None]]:
         ) from exc
 
     logger.info("loading base model: %s (4bit=%s)", cfg.base_model, cfg.load_in_4bit)
+    # max_seq_length tracks the actual config; not a hardcoded 4096. vllm fast_inference
+    # is opt-in (the runbook calls it out) — defaults to OFF so T4 doesn't OOM via
+    # vllm reserving 90% of GPU memory for its KV cache.
+    grpo_cfg = cfg.raw.get("grpo") or {}
+    max_prompt = int(grpo_cfg.get("max_prompt_length", 1024))
+    max_completion = int(grpo_cfg.get("max_completion_length", 256))
+    max_seq = max_prompt + max_completion + 256  # small buffer
+    use_vllm = bool(cfg.raw.get("model", {}).get("use_vllm", False))
+
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name=cfg.base_model,
-        max_seq_length=4096,
+        max_seq_length=max_seq,
         dtype=None,
         load_in_4bit=cfg.load_in_4bit,
+        fast_inference=use_vllm,
     )
     lora_cfg = cfg.raw.get("lora") or {}
     model = FastLanguageModel.get_peft_model(
@@ -77,7 +87,7 @@ def build_unsloth_grpo_chat(cfg) -> tuple[Callable, Callable[[Path], None]]:
         bias="none",
         use_gradient_checkpointing="unsloth",
         random_state=42,
-        max_seq_length=4096,
+        max_seq_length=max_seq,
     )
     if cfg.resume_adapter:
         try:
