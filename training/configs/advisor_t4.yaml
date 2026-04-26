@@ -1,0 +1,52 @@
+# T4-optimized timeboxed Phase 1: fits comfortably in 14.5 GB.
+#
+# changes vs advisor_timeboxed.yaml that caused OOM on T4:
+#   - num_generations: 1 (was 2) — halves grpo activation memory
+#   - max_prompt_length: 1024 (was 2048) — halves KV cache for the reference model
+#   - max_completion_length: 192 (was 320) — saves more activation memory
+#   - max_turns: 6 (was 8) — shorter episodes, smaller transcripts
+#
+# also: set PYTORCH_ALLOC_CONF=expandable_segments:True in the env before launching
+# to reduce memory fragmentation (T4 was OOMing with 14.29 GB allocated, only
+# 100 MB reserved-but-unallocated — that fragmentation is the killer).
+phase: timeboxed_t4
+model:
+  base_model: Qwen/Qwen2.5-0.5B-Instruct
+  load_in_4bit: true
+  use_unsloth: true
+
+lora:
+  r: 8
+  alpha: 16
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj]
+
+grpo:
+  num_generations: 1
+  learning_rate: 1.0e-5
+  beta: 0.04
+  max_prompt_length: 1024
+  max_completion_length: 192
+  temperature: 0.9
+  top_p: 0.95
+  num_episodes: 100
+  episode_batch_size: 1
+
+env:
+  max_turns: 6
+  difficulty_mix:
+    easy: 0.7
+    medium: 0.3
+    hard: 0.0
+
+logging:
+  wandb_project: nyaya-mitra-grpo
+  wandb_tags: [phase1, t4, qwen-0.5b]
+  log_every: 1
+  transcript_dump_every: 50
+  transcript_dump_count: 1
+  adapter_snapshot_every: 50
+  metrics_jsonl: training/dumps/phase1_t4_metrics.jsonl
+
+abort:
+  min_rolling_mean_at_500: 0.0
