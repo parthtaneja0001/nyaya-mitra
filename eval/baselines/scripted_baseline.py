@@ -45,7 +45,10 @@ _FACT_TO_SCHEMES: dict[str, list[str]] = {
     "willing_unskilled_work": ["mgnrega"],
     "kuccha_or_houseless": ["pm_awas_grameen"],
     "adult_18_70": ["pmsby"],
-    "has_bank_account": ["pmsby"],
+    # apy + pmjjby + pmsby are the universal-eligibility triad — any adult
+    # with a bank account qualifies. fires only when has_bank_account is
+    # actually elicited from the citizen, so contradiction gate stays clean.
+    "has_bank_account": ["pmsby", "pmjjby", "apy"],
 }
 
 _FACT_TO_FRAMEWORKS: dict[str, list[str]] = {
@@ -69,6 +72,8 @@ _SCHEME_MIN_FACTS: dict[str, int] = {
     "mgnrega": 2,
     "pm_awas_grameen": 2,
     "pmsby": 1,
+    "pmjjby": 1,
+    "apy": 1,
 }
 
 _FRAMEWORK_MIN_FACTS: dict[str, int] = {
@@ -97,6 +102,8 @@ _DOCS_SCHEME: dict[str, list[str]] = {
     "mgnrega": ["Aadhaar", "Bank account", "Job card application"],
     "pm_awas_grameen": ["Aadhaar", "SECC verification", "Bank account"],
     "pmsby": ["Aadhaar", "Bank account"],
+    "pmjjby": ["Aadhaar", "Bank account"],
+    "apy": ["Aadhaar", "Bank account"],
 }
 
 _DOCS_FRAMEWORK: dict[str, list[str]] = {
@@ -309,13 +316,22 @@ def build_scripted_baseline(
             return Finalize(plan=_build_plan_from_facts(state.elicited_facts))
 
         if ti < max_probes:
-            choice = _select_probe(set(), language)
-            if choice is not None:
-                topic, q = choice
+            # cycle through probes by index, not by passing an empty set every turn.
+            probe_idx = ti
+            if probe_idx < len(_PROBE_PLAN):
+                topic, en, hi = _PROBE_PLAN[probe_idx]
+                q = hi if language == "hi" else en
                 return Probe(question=q, sensitive_topic=topic, language=language)  # type: ignore[arg-type]
 
         if ti < max_probes + max_asks:
-            return Ask(question=_select_question(set(), language), language=language)  # type: ignore[arg-type]
+            # cycle through asks by index so we don't repeat the same question 3x.
+            ask_idx = ti - max_probes
+            if 0 <= ask_idx < len(_ASK_PLAN):
+                en, hi = _ASK_PLAN[ask_idx]
+                q = hi if language == "hi" else en
+            else:
+                q = "Anything else you want to share?" if language != "hi" else "और कुछ बताना है?"
+            return Ask(question=q, language=language)  # type: ignore[arg-type]
 
         return Finalize(plan=_build_plan_from_facts(state.elicited_facts))
 

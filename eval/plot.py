@@ -260,31 +260,57 @@ def integration_solve_rate(
     *,
     out: Path,
 ) -> None:
-    """headline number — % of integrated cases solved (both schemes AND legal
-    correctly identified at the bonus threshold)."""
+    """headline panel — three structural success metrics by model:
+    pct_finalized (env solvable?), pct_all_gates_passed (anti-hacking working?),
+    and mean total reward (overall plan quality scaled to %).
+
+    pct_integrated_solved is a strict ≥0.5 on all four precision/recall metrics;
+    it tends to be 0 for cold-start and rule-based baselines alike, so we
+    surface mean_total_reward (continuous; dense signal) plus the two
+    structural binaries here. integration_solve is still computed and shown
+    as the third metric to keep the original headline visible."""
     if not eval_results:
         _placeholder("integration solve rate", out)
         return
     labels = list(eval_results.keys())
-    ys = []
-    for label in labels:
-        m = eval_results[label].get("integrated")
-        ys.append(getattr(m, "pct_integrated_solved", 0.0) if m else 0.0)
-    fig, ax = plt.subplots(figsize=(7, 4.5))
-    bars = ax.bar(labels, ys, color="#2980b9")
-    for bar, y in zip(bars, ys, strict=True):
-        ax.text(
-            bar.get_x() + bar.get_width() / 2,
-            y + 1,
-            f"{y:.1f}%",
-            ha="center",
-            va="bottom",
-            fontsize=10,
-        )
-    ax.set_ylabel("integration solve rate (%)")
-    ax.set_xlabel("model")
-    ax.set_ylim(0, max(100.0, max(ys) * 1.15) if ys else 100.0)
-    ax.set_title("Integrated cases: % solved (headline metric)")
+    metric_keys = [
+        ("pct_finalized", "% finalized\n(env solvable)"),
+        ("pct_all_gates_passed", "% gates clean\n(no hallucination)"),
+        ("mean_total_reward_pct", "mean total reward\n(% of max=1.0)"),
+    ]
+    fig, ax = plt.subplots(figsize=(9, 5))
+    n_metrics = len(metric_keys)
+    width = 0.8 / max(1, len(labels))
+    palette = ["#3498db", "#e67e22", "#2ecc71", "#9b59b6"]
+    for i, label in enumerate(labels):
+        per_cohort = eval_results[label]
+        # use the integrated cohort as the headline; matches the original intent.
+        m = per_cohort.get("integrated") or next(iter(per_cohort.values()), None)
+        if m is None:
+            continue
+        ys = [
+            getattr(m, "pct_finalized", 0.0),
+            getattr(m, "pct_all_gates_passed", 0.0),
+            100.0 * max(0.0, getattr(m, "mean_total_reward", 0.0)),
+        ]
+        xs = [j + i * width - 0.4 + width / 2 for j in range(n_metrics)]
+        bars = ax.bar(xs, ys, width=width, label=label, color=palette[i % len(palette)])
+        for bar, y in zip(bars, ys, strict=True):
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                y + 1,
+                f"{y:.0f}%",
+                ha="center",
+                va="bottom",
+                fontsize=9,
+            )
+    ax.set_xticks(range(n_metrics))
+    ax.set_xticklabels([k[1] for k in metric_keys])
+    ax.set_xlabel("metric (integrated cohort)")
+    ax.set_ylabel("percent")
+    ax.set_ylim(0, 110)
+    ax.set_title("Headline metrics by model — integrated cohort")
+    ax.legend(loc="upper right", fontsize=9)
     ax.grid(True, axis="y", linestyle=":", linewidth=0.5)
     fig.tight_layout()
     fig.savefig(out, dpi=DPI)
