@@ -334,6 +334,7 @@ def train(
                         pass
 
         if step % cfg.log_every == 0:
+            rolling_mean = sum(rolling) / len(rolling) if rolling else 0.0
             row = {
                 "step": rec.step,
                 "seed": rec.seed,
@@ -343,10 +344,22 @@ def train(
                 "sim_leak_count": rec.sim_leak_count,
                 "components": rec.components,
                 "gate_counts": rec.gate_counts,
-                "rolling_mean_100": sum(rolling) / len(rolling) if rolling else 0.0,
+                "rolling_mean_100": rolling_mean,
                 "grpo": grpo_info,
             }
             jsonl_log(cfg.metrics_jsonl, row)
+            # one-line per-step progress so a long colab run shows life signs.
+            grpo_loss = (grpo_info or {}).get("loss") if isinstance(grpo_info, dict) else None
+            logger.info(
+                "step=%d seed=%s diff=%s reward=%.3f finalized=%s rolling=%.3f grpo_loss=%s",
+                rec.step,
+                rec.seed,
+                rec.difficulty,
+                rec.total_reward,
+                rec.finalized,
+                rolling_mean,
+                f"{grpo_loss:.4f}" if isinstance(grpo_loss, (int, float)) else "n/a",
+            )
             if wandb_run is not None:
                 try:
                     wandb_run.log(row, step=step)
