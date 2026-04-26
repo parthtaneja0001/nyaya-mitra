@@ -18,3 +18,4 @@ dist/
 .coverage
 htmlcov/
 .DS_Store
+.claude/

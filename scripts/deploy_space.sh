@@ -96,7 +96,11 @@ echo "uploading to $SPACE_REPO..."
     --exclude "dist/*" \
     --exclude ".DS_Store" \
     --exclude "node_modules/*" \
-    --exclude ".README.original.bak" 2>&1 | tail -5
+    --exclude ".claude/*" \
+    --exclude ".env" \
+    --exclude ".README.original.bak" \
+    --delete ".claude/*" \
+    --delete "*.bak" 2>&1 | tail -5
 
 SPACE_HOST=$(echo "$SPACE_REPO" | tr '/' '-')
 echo ""
