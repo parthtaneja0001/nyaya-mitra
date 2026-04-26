@@ -1,14 +1,16 @@
 # T4-optimized timeboxed Phase 1: fits comfortably in 14.5 GB.
 #
-# changes vs advisor_timeboxed.yaml that caused OOM on T4:
+# changes vs advisor_timeboxed.yaml that caused OOM / crashes on T4:
 #   - num_generations: 1 (was 2) — halves grpo activation memory
-#   - max_prompt_length: 1024 (was 2048) — halves KV cache for the reference model
-#   - max_completion_length: 192 (was 320) — saves more activation memory
-#   - max_turns: 6 (was 8) — shorter episodes, smaller transcripts
+#   - max_completion_length: 160 (was 320) — saves activation memory
+#   - max_turns: 6 (was 8) — shorter episodes
+#   - dropout 0 + beta 0 — kills kl ref model + enables unsloth fast patching
+#   - max_prompt_length: 2048 — must be >= the env's actual prompt length;
+#     real episodes hit ~2000 tokens by turn 6, lower caps caused unsloth to
+#     truncate silently and grpo_step then sliced past the end.
 #
 # also: set PYTORCH_ALLOC_CONF=expandable_segments:True in the env before launching
-# to reduce memory fragmentation (T4 was OOMing with 14.29 GB allocated, only
-# 100 MB reserved-but-unallocated — that fragmentation is the killer).
+# to reduce memory fragmentation.
 phase: timeboxed_t4
 model:
   base_model: Qwen/Qwen2.5-0.5B-Instruct
@@ -25,7 +27,12 @@ grpo:
   num_generations: 1
   learning_rate: 1.0e-5
   beta: 0.0  # 0 kills the KL reference model entirely; saves ~7gb on T4 (was 0.04)
-  max_prompt_length: 768
+  # real prompts hit ~2000 tokens by turn 6 (system + kb + 6-turn dialogue history).
+  # 768 caused unsloth to silently truncate inside the model and the buffer
+  # offsets in grpo_step then pointed past the end. 2048 fits real conversations
+  # with breathing room and still fits the t4 (now ~12-13gb peak with 8bit adam +
+  # per-turn backward + no vllm).
+  max_prompt_length: 2048
   max_completion_length: 160
   temperature: 0.9
   top_p: 0.95

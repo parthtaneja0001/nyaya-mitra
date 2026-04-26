@@ -124,12 +124,23 @@ def build_unsloth_grpo_chat(cfg) -> tuple[Callable, Callable[[Path], None]]:
         "beta": float(cfg.raw.get("grpo", {}).get("beta", 0.04)),
         "temperature": float(cfg.temperature),
         "top_p": float(cfg.top_p),
+        "max_prompt_length": max_prompt,
         "max_completion_length": int(cfg.raw.get("grpo", {}).get("max_completion_length", 512)),
     }
 
     def chat(messages, options=None):
         text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
         inputs = tokenizer(text, return_tensors="pt").to(model.device)
+        # left-truncate to max_prompt_length so the prompt + completion always
+        # fits in max_seq. left-truncation preserves the most recent turn (what
+        # we react to). without this, unsloth silently truncates inside the
+        # model and our buffer offsets in grpo_step point past the end.
+        cap = state["max_prompt_length"]
+        if inputs["input_ids"].shape[1] > cap:
+            inputs = {
+                "input_ids": inputs["input_ids"][:, -cap:],
+                "attention_mask": inputs["attention_mask"][:, -cap:],
+            }
         with torch.no_grad():
             out = model.generate(
                 **inputs,
@@ -216,7 +227,17 @@ def _grpo_step(state: dict, episode_reward: float, model, tokenizer):
         full_ids = torch.cat([prompt_ids, completion_ids], dim=0).unsqueeze(0)
         attn = torch.ones_like(full_ids)
         out = model(full_ids, attention_mask=attn)
-        logits = out.logits[0, prompt_ids.shape[0] - 1 : -1, :]
+        # defensive: if the model's effective output length is shorter than the
+        # input (internal truncation, padding mask edge cases, etc.), skip this
+        # turn instead of crashing the whole episode.
+        prompt_end = prompt_ids.shape[0]
+        if out.logits.shape[1] < prompt_end + 1:
+            del out
+            continue
+        logits = out.logits[0, prompt_end - 1 : -1, :]
+        if logits.shape[0] < completion_ids.shape[0]:
+            del out
+            continue
         log_probs = F.log_softmax(logits, dim=-1)
         token_logprobs = log_probs.gather(1, completion_ids.unsqueeze(1)).squeeze(1)
         # per-turn loss with global 1/n_tokens scaling — sum of these equals the
