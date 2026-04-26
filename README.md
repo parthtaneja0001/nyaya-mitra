@@ -9,10 +9,9 @@ A paralegal-cum-welfare-advisor RL environment for vulnerable Indian citizens. O
 | | |
 |---|---|
 | 🚀 **Live HF Space** | <https://huggingface.co/spaces/parthtaneja0001/nyaya-mitra-env> ([healthz](https://parthtaneja0001-nyaya-mitra-env.hf.space/healthz)) |
+| 🎬 **Demo video** | _link added after recording_ |
 | 📓 **Training notebook (Colab)** | [`training/train_grpo_colab.ipynb`](training/train_grpo_colab.ipynb) — [open in Colab](https://colab.research.google.com/github/parthtaneja0001/nyaya-mitra/blob/main/training/train_grpo_colab.ipynb) |
-| 📝 **Blog post** | [`demo/blog_post.md`](demo/blog_post.md) |
-| 🎬 **Video script** | [`demo/video_script.md`](demo/video_script.md) (recording follows training) |
-| 📊 **Training plots** | [`demo/plots/`](demo/plots/) — six PNGs regenerated from real metrics post-training |
+| 📊 **Training plots** | [`demo/plots/`](demo/plots/) — six PNGs from a real 176-episode run on free Colab T4 |
 | 🧱 **OpenEnv manifest** | [`openenv.yaml`](openenv.yaml) — declares the FastAPI entrypoint, runtime, port |
 | 🛡️ **Reward design + gates** | [`docs/reward_design.md`](docs/reward_design.md) |
 | 📦 **Repo source** | <https://github.com/parthtaneja0001/nyaya-mitra> |
@@ -168,10 +167,9 @@ The training loop adds a per-turn format-correctness shaping bonus (+0.05 per pa
 ## Submission artifacts
 
 - 🚀 **Live HF Space**: <https://huggingface.co/spaces/parthtaneja0001/nyaya-mitra-env>
+- 🎬 **Demo video**: _link added after recording_
 - 📓 **Training notebook**: [`training/train_grpo_colab.ipynb`](training/train_grpo_colab.ipynb)
-- 📝 **Blog post**: [`demo/blog_post.md`](demo/blog_post.md)
-- 🎬 **Video script**: [`demo/video_script.md`](demo/video_script.md)
-- 📊 **Plots** (real-data, post-training): [`demo/plots/`](demo/plots/)
+- 📊 **Plots** (real-data from 176-episode run): [`demo/plots/`](demo/plots/)
 - 🛡️ **Reward design + invariants**: [`docs/reward_design.md`](docs/reward_design.md)
 - 📋 **Eval cases + transcripts**: `eval/eval_cases/` (30 held-out cases) + [`demo/transcripts/`](demo/transcripts/)
 - ⚖️ **Scope + liability framing**: [`docs/what_this_is_not.md`](docs/what_this_is_not.md)
