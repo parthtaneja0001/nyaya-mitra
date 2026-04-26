@@ -27,23 +27,23 @@ EXPECTED: dict[str, dict[str, set[str]]] = {
         "frameworks": set(),
     },
     "seed_003": {
-        "schemes": {"pmsby"},
+        "schemes": {"pmjjby", "pmsby"},
         "frameworks": {"consumer_protection_act_2019"},
     },
     "seed_004": {
-        "schemes": {"pm_kisan", "pmuy", "mgnrega", "pmsby"},
+        "schemes": {"mgnrega", "pm_kisan", "pmjjby", "pmsby", "pmuy"},
         "frameworks": set(),
     },
     "seed_005": {
-        "schemes": {"pmsby"},
+        "schemes": {"apy", "pmjjby", "pmsby"},
         "frameworks": {"maternity_benefit_act_1961"},
     },
     "seed_006": {
-        "schemes": {"pmuy", "pmsby"},
-        "frameworks": {"maternity_benefit_act_1961", "domestic_violence_act_2005"},
+        "schemes": {"apy", "pmjjby", "pmsby", "pmuy"},
+        "frameworks": {"domestic_violence_act_2005", "maternity_benefit_act_1961"},
     },
     "seed_007": {
-        "schemes": {"ayushman_bharat", "mgnrega", "pm_awas_grameen", "pmsby"},
+        "schemes": {"apy", "ayushman_bharat", "mgnrega", "pm_awas_grameen", "pmjjby", "pmsby"},
         "frameworks": set(),
     },
     "seed_008": {
@@ -51,27 +51,37 @@ EXPECTED: dict[str, dict[str, set[str]]] = {
         "frameworks": set(),
     },
     "seed_009": {
-        "schemes": {"pmsby"},
+        "schemes": {"apy", "pmjjby", "pmsby"},
         "frameworks": {"consumer_protection_act_2019"},
     },
     "seed_010": {
-        "schemes": {"mgnrega", "pm_kisan", "pmsby", "pmuy"},
+        "schemes": {"apy", "mgnrega", "pm_kisan", "pmjjby", "pmkmy", "pmsby", "pmuy"},
         "frameworks": set(),
     },
     "seed_011": {
-        "schemes": {"pmsby"},
+        "schemes": {"apy", "pmjjby", "pmsby"},
         "frameworks": {"maternity_benefit_act_1961"},
     },
     "seed_012": {
-        "schemes": {"pmsby"},
+        "schemes": {"apy", "pmjjby", "pmsby"},
         "frameworks": {"minimum_wages_act_1948"},
     },
     "seed_013": {
-        "schemes": {"pmsby", "pmuy"},
+        "schemes": {"apy", "pmjjby", "pmsby", "pmuy"},
         "frameworks": {"domestic_violence_act_2005", "maternity_benefit_act_1961"},
     },
     "seed_014": {
-        "schemes": {"ayushman_bharat", "mgnrega", "pm_awas_grameen", "pm_kisan", "pmsby", "pmuy"},
+        "schemes": {
+            "apy",
+            "ayushman_bharat",
+            "mgnrega",
+            "pm_awas_grameen",
+            "pm_kisan",
+            "pmjjby",
+            "pmkmy",
+            "pmsby",
+            "pmuy",
+        },
         "frameworks": set(),
     },
 }

@@ -1,0 +1,35 @@
+{
+  "scheme_id": "iggndps",
+  "name": {
+    "en": "Indira Gandhi National Disability Pension Scheme",
+    "hi": "इंदिरा गांधी राष्ट्रीय विकलांगता पेंशन योजना"
+  },
+  "category": "health",
+  "ministry": "Ministry of Rural Development",
+  "benefit": {
+    "en": "Monthly pension of rupees 300 (and additional state top-up where applicable) to BPL persons with severe or multiple disability aged 18 or above",
+    "hi": "गंभीर या बहु-विकलांगता वाले BPL व्यक्तियों को मासिक 300 रुपये पेंशन"
+  },
+  "eligibility_rules_human": "Indian citizen aged 18 or above, BPL household, with severe disability (80%+) or multiple disability as certified by a competent medical authority.",
+  "required_documents": [
+    "Aadhaar",
+    "BPL ration card or SECC verification",
+    "Disability certificate from competent medical authority",
+    "Bank account passbook",
+    "Recent photograph"
+  ],
+  "application_paths": {
+    "online_url": "https://nsap.nic.in/",
+    "offline_office_pattern": "Block Development Office / Gram Panchayat / urban local body",
+    "offline_steps": [
+      "Obtain disability certificate from district hospital / CMO",
+      "Submit application form at BDO or municipal office",
+      "Verification by Tehsildar / SDO",
+      "Pension credited monthly to bank account via DBT"
+    ]
+  },
+  "source": {
+    "url": "https://nsap.nic.in/",
+    "verified_on": "2026-04-26"
+  }
+}

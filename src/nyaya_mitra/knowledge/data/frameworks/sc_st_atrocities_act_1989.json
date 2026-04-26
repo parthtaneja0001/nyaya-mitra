@@ -1,0 +1,37 @@
+{
+  "framework_id": "sc_st_atrocities_act_1989",
+  "name": {
+    "en": "Scheduled Castes and Scheduled Tribes (Prevention of Atrocities) Act, 1989",
+    "hi": "अनुसूचित जाति और अनुसूचित जनजाति (अत्याचार निवारण) अधिनियम, 1989"
+  },
+  "category": "civil_rights",
+  "applicable_situations": [
+    "Caste-based abuse, humiliation, or assault against a member of SC or ST community by a non-SC/ST person",
+    "Forcing an SC/ST person to consume offensive substance or do forced labour",
+    "Wrongful occupation or dispossession of SC/ST land",
+    "Sexual exploitation or violence against an SC/ST woman with caste motivation",
+    "Boycott, threats, or intimidation aimed at preventing SC/ST persons from exercising rights"
+  ],
+  "forum": "Special Court designated under the Act in each district; investigation by an officer of rank not below DSP",
+  "limitation_period_note": "FIR should be lodged promptly. Cognizance taken when investigation officer files chargesheet. The Act mandates investigation completion within 60 days.",
+  "procedural_steps": [
+    "Lodge FIR at the nearest police station; police must register without delay (Section 18A)",
+    "Investigation by DSP-rank officer; chargesheet within 60 days",
+    "Trial in Special Court; victim and witness protection provisions apply",
+    "Relief and rehabilitation under Rules: immediate cash assistance, medical aid, transport, victim/witness protection",
+    "Appeal to High Court within 90 days of judgment"
+  ],
+  "required_documents": [
+    "Identity proof of complainant",
+    "Caste certificate of the SC/ST victim",
+    "FIR copy",
+    "Medical reports if injured",
+    "Witness statements",
+    "Photographs / documentary evidence of the incident"
+  ],
+  "legal_aid_authority": "DLSA",
+  "source": {
+    "url": "https://socialjustice.gov.in/",
+    "verified_on": "2026-04-26"
+  }
+}

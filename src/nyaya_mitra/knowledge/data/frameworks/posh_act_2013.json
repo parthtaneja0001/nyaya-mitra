@@ -1,0 +1,34 @@
+{
+  "framework_id": "posh_act_2013",
+  "name": {
+    "en": "Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013",
+    "hi": "महिलाओं के कार्यस्थल पर यौन उत्पीड़न अधिनियम, 2013"
+  },
+  "category": "women_protection",
+  "applicable_situations": [
+    "Sexual harassment at the workplace by a colleague, employer, or third party",
+    "Quid pro quo: implicit or explicit promise of preferential treatment / threat in exchange for sexual favour",
+    "Hostile work environment created by sexually coloured remarks, conduct, or imagery",
+    "Retaliation against a woman for raising a complaint of sexual harassment"
+  ],
+  "forum": "Internal Complaints Committee (ICC) of the workplace; Local Complaints Committee (LCC) at District Officer if no ICC; appeal to court of competent jurisdiction",
+  "limitation_period_note": "Complaint must be filed within 3 months of the incident (extendable by 3 months by ICC/LCC for sufficient cause).",
+  "procedural_steps": [
+    "Submit written complaint to the ICC (or LCC) within 3 months",
+    "ICC may attempt conciliation with the aggrieved woman's consent",
+    "If conciliation fails, ICC conducts inquiry and submits report within 90 days",
+    "Action recommended: written apology, warning, withholding pay, dismissal, or other organisational action",
+    "Appeal within 90 days of the order to the appropriate court / tribunal"
+  ],
+  "required_documents": [
+    "Identity proof",
+    "Employment proof",
+    "Written complaint with details of incident (date, place, nature, witnesses)",
+    "Any documentary evidence (emails, messages, CCTV, witness statements)"
+  ],
+  "legal_aid_authority": "DLSA",
+  "source": {
+    "url": "https://wcd.nic.in/sites/default/files/Sexual-Harassment-at-Workplace-Act.pdf",
+    "verified_on": "2026-04-26"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "scheme_id": "pmegp",
+  "name": {
+    "en": "Prime Minister's Employment Generation Programme",
+    "hi": "प्रधानमंत्री रोजगार सृजन कार्यक्रम"
+  },
+  "category": "labor_livelihood",
+  "ministry": "Ministry of Micro, Small and Medium Enterprises",
+  "benefit": {
+    "en": "Subsidy of 15-35% on bank loans up to rupees 50 lakh (manufacturing) or 20 lakh (services) to set up new micro-enterprises in rural and urban areas. Margin money subsidy higher for SC/ST/OBC/women/disabled/ex-servicemen.",
+    "hi": "नई सूक्ष्म इकाइयों के लिए 25 लाख तक के बैंक ऋण पर 15-35% सब्सिडी"
+  },
+  "eligibility_rules_human": "Indian citizen aged 18 or above, minimum 8th-pass for projects above 10 lakh (manufacturing) / 5 lakh (services). Self-help groups, charitable trusts, and registered societies also eligible. Existing units not eligible.",
+  "required_documents": [
+    "Aadhaar",
+    "Educational qualification certificates",
+    "Project report",
+    "Caste / category certificate (if applicable)",
+    "Bank account passbook"
+  ],
+  "application_paths": {
+    "online_url": "https://www.kviconline.gov.in/pmegpeportal/jsp/pmegponline.jsp",
+    "offline_office_pattern": "KVIC / KVIB / DIC office in the district",
+    "offline_steps": [
+      "Apply online on the KVIC portal",
+      "Application reviewed by district task force committee",
+      "Bank sanctions loan; KVIC releases margin money subsidy",
+      "Beneficiary completes 10-day EDP training"
+    ]
+  },
+  "source": {
+    "url": "https://www.kviconline.gov.in/pmegpeportal/jsp/pmegponline.jsp",
+    "verified_on": "2026-04-26"
+  }
+}
