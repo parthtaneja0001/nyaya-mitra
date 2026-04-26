@@ -11,14 +11,15 @@
 #
 # also: set PYTORCH_ALLOC_CONF=expandable_segments:True in the env before launching
 # to reduce memory fragmentation.
-phase: timeboxed_t4_resumed
+phase: timeboxed_t4
 model:
   base_model: Qwen/Qwen2.5-0.5B-Instruct
   load_in_4bit: true
   use_unsloth: true
-  # resume from the adapter we trained in the first run. comment this line
-  # out to start from scratch.
-  resume_adapter: training/checkpoints/adapter_final_timeboxed_t4.lora
+  # uncomment to resume from a prior adapter (we trained in two phases
+  # of 100 each via resume; a fresh run with num_episodes=200 below produces
+  # the same total trained-episode count from scratch).
+  # resume_adapter: training/checkpoints/adapter_final_timeboxed_t4.lora
 
 lora:
   r: 8
@@ -39,7 +40,7 @@ grpo:
   max_completion_length: 160
   temperature: 0.9
   top_p: 0.95
-  num_episodes: 100
+  num_episodes: 200
   episode_batch_size: 1
 
 env:
@@ -56,10 +57,7 @@ logging:
   transcript_dump_every: 50
   transcript_dump_count: 1
   adapter_snapshot_every: 50
-  # write to a NEW file so the original phase1_t4_metrics.jsonl (100 rows) is
-  # preserved. scripts/merge_metrics.py concatenates them with monotonic step
-  # numbers for a single combined curve.
-  metrics_jsonl: training/dumps/phase1_t4_metrics_resumed.jsonl
+  metrics_jsonl: training/dumps/phase1_t4_metrics.jsonl
 
 abort:
   min_rolling_mean_at_500: 0.0
