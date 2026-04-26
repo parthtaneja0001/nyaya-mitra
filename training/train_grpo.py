@@ -39,7 +39,14 @@ import yaml
 
 from eval.baselines.llm_protocol import FakeChat, LLMChat
 from eval.baselines.prompted_baseline import build_prompted_baseline
+from nyaya_mitra.interface import Ask
 from training.rollout import EpisodeResult, run_episode
+
+# the parser substitutes this exact string when an llm response fails to parse.
+# we use it to detect "real" (parseable) advisor turns vs fallbacks for the
+# format-correctness shaping reward.
+FALLBACK_ASK_QUESTION = "Could you tell me a little more about your situation?"
+SHAPING_BONUS_PER_PARSE = 0.05  # 0.30 ceiling at max_turns=6
 
 logger = logging.getLogger("nyaya.train_grpo")
 
@@ -314,16 +321,34 @@ def train(
             env.close()
 
         rec = step_record_from_result(step, result)
-        rolling.append(rec.total_reward)
+
+        # format-correctness shaping bonus. cold-start qwen 0.5b almost never
+        # produces a valid FINALIZE, so env reward is 0 and grpo gets a 0
+        # gradient. we add a small per-turn bonus for parseable advisor
+        # actions (anything that's not the fallback Ask the parser substitutes
+        # on failure). caps at SHAPING_BONUS_PER_PARSE * max_turns.
+        n_parse_ok = sum(
+            1
+            for turn in result.turns
+            if not (
+                isinstance(turn.action, Ask)
+                and turn.action.question == FALLBACK_ASK_QUESTION
+            )
+        )
+        shaping_bonus = SHAPING_BONUS_PER_PARSE * n_parse_ok
+        env_reward = float(rec.total_reward)
+        shaped_reward = env_reward + shaping_bonus
+        rolling.append(shaped_reward)
 
         # GRPO update hook. real-model chat exposes grpo_step(reward) which
         # consumes the (prompt, completion) pairs buffered during the episode
         # and applies one policy-gradient update. FakeChat doesn't have it.
+        # we feed the SHAPED reward so the cold-start gradient is non-zero.
         grpo_info = None
         grpo_step_fn = getattr(chat, "grpo_step", None)
         if callable(grpo_step_fn):
             try:
-                grpo_info = grpo_step_fn(rec.total_reward)
+                grpo_info = grpo_step_fn(shaped_reward)
             except Exception as exc:
                 logger.warning("grpo_step failed at step %d: %s", step, exc)
                 flush = getattr(chat, "flush_episode", None)
@@ -339,7 +364,11 @@ def train(
                 "step": rec.step,
                 "seed": rec.seed,
                 "difficulty": rec.difficulty,
-                "total_reward": rec.total_reward,
+                # primary curve metric: env reward + format-correctness shaping.
+                "total_reward": shaped_reward,
+                "env_reward": env_reward,
+                "shaping_bonus": shaping_bonus,
+                "n_parse_ok": n_parse_ok,
                 "finalized": rec.finalized,
                 "sim_leak_count": rec.sim_leak_count,
                 "components": rec.components,
@@ -351,11 +380,14 @@ def train(
             # one-line per-step progress so a long colab run shows life signs.
             grpo_loss = (grpo_info or {}).get("loss") if isinstance(grpo_info, dict) else None
             logger.info(
-                "step=%d seed=%s diff=%s reward=%.3f finalized=%s rolling=%.3f grpo_loss=%s",
+                "step=%d seed=%s diff=%s parse_ok=%d/%d env=%.2f shaped=%.2f finalized=%s rolling=%.3f grpo_loss=%s",
                 rec.step,
                 rec.seed,
                 rec.difficulty,
-                rec.total_reward,
+                n_parse_ok,
+                len(result.turns),
+                env_reward,
+                shaped_reward,
                 rec.finalized,
                 rolling_mean,
                 f"{grpo_loss:.4f}" if isinstance(grpo_loss, (int, float)) else "n/a",
